@@ -105,6 +105,15 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
     (cartItem) => +cartItem.id.split(',')[0] == item.id
   );
 
+  // Compute remaining availability across cart for this product (all modificators)
+  const baseId = String(item.id);
+  const currentTotal = cart
+    .filter((ci) => String(ci.id).split(',')[0] === baseId)
+    .reduce((sum, ci) => sum + ci.quantity, 0);
+  const maxAvail = Number.isFinite(item.quantity) ? item.quantity : Infinity;
+  const remaining = Math.max(0, maxAvail - currentTotal);
+  const isOutOfStock = remaining <= 0;
+
   const handleAddNoMods = useCallback(() => {
     vibrateClick();
 
@@ -276,29 +285,41 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
               </div>
             )}
             {sizes.length !== 0 ? (
-              <footer className='counter'>
-                <div className='counter__left'>
-                  <img
-                    src={minus}
-                    alt=''
-                    onClick={() => handleCounterChange(-1)}
-                    className='cursor-pointer'
-                  />
-                  <span>{counter}</span>
-                  <img
-                    src={plus}
-                    alt=''
-                    onClick={() => handleCounterChange(1)}
-                    className='cursor-pointer'
-                  />
+              isOutOfStock ? (
+                <div className='out-of-stock text-red-600 font-semibold'>
+                  {'Нет в наличии'}
                 </div>
-                <div
-                  className='counter__right'
-                  style={{ backgroundColor: colorTheme, color: '#fff' }}
-                >
-                  <button onClick={handleDone}>{t('button.add')}</button>
+              ) : (
+                <footer className='counter'>
+                  <div className='counter__left'>
+                    <img
+                      src={minus}
+                      alt=''
+                      onClick={() => handleCounterChange(-1)}
+                      className='cursor-pointer'
+                    />
+                    <span>{counter}</span>
+                    <img
+                      src={plus}
+                      alt=''
+                      onClick={() => handleCounterChange(1)}
+                      className='cursor-pointer'
+                    />
+                  </div>
+                  <div
+                    className='counter__right'
+                    style={{ backgroundColor: colorTheme, color: '#fff' }}
+                  >
+                    <button onClick={handleDone}>{t('button.add')}</button>
+                  </div>
+                </footer>
+              )
+            ) : isOutOfStock ? (
+              <div className='food-detail__actions'>
+                <div className='out-of-stock text-red-600 font-semibold'>
+                  {'Нет в наличии'}
                 </div>
-              </footer>
+              </div>
             ) : (
               <div className='food-detail__actions'>
                 {!foundCartItem ? (
