@@ -1,0 +1,34 @@
+/* Aggregated legacy styles: Sass requires @use to come before any other rules */
+/* Project-level */
+@use "../App.scss" as *;
+
+/* Components */
+@use "../components/BusketDesktop/style.scss" as *;
+@use "../components/Cards/style.scss" as *;
+@use "../components/Header/SubHeader/style.scss" as *;
+@use "../components/Header/SupHeader/style.scss" as *;
+@use "../components/Hero/style.scss" as *;
+@use "../components/ClearCartModal/index.scss" as *;
+@use "../components/PointsModal/index.scss" as *;
+@use "../components/WeeklyScheduleModal/index.scss" as *;
+
+/* Pages */
+@use "../client-pages/Cart/style.scss" as *;
+@use "../client-pages/NotFound/style.scss" as *;
+@use "../client-pages/Order/style.scss" as *;
+@use "../client-pages/SelectOrderType/style.scss" as *;
+
+/* Home sub-components */
+@use "../client-pages/Home/components/Catalog/style.scss" as *;
+@use "../client-pages/Home/components/Categories/style.scss" as *;
+@use "../client-pages/Home/components/Search/style.scss" as *;
+
+/* Tailwind reference and theme tokens can be placed after @use */
+@reference "tailwindcss";
+
+/* Tailwind v4 theme tokens used by legacy classes like `font-benzin` */
+@theme inline {
+  --font-benzin: "Benzin", sans-serif;
+  --font-inter: "Inter", sans-serif;
+  --font-baloo: "Baloo 2", sans-serif;
+}

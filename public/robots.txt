@@ -1,0 +1,13 @@
+# robots.txt for ishop-next
+# Default: allow all crawlers to access the site
+# Block common non-public endpoints
+
+User-agent: *
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+Disallow: /server/
+Disallow: /tmp/
+
+# Uncomment and set your production sitemap URL once available
+# Sitemap: https://your-domain.example/sitemap.xml

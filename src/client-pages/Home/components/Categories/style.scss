@@ -1,0 +1,60 @@
+.categories {
+  @apply overflow-x-auto overflow-y-hidden sticky top-0 z-[1] bg-[#F1F2F3] relative;
+  @apply md:overflow-visible md:flex md:gap-[20px] md:py-0;
+
+  .dropdown-arrow {
+    @apply absolute right-[10px] cursor-pointer text-[12px] left-[50%] bottom-[-20px] translate-x-[-50%] bg-[#a9a9a9] text-[white] rounded w-max px-[15px];
+  }
+
+  &__content {
+    @apply flex items-center gap-[15px] pt-[15px] pb-[40px] md:flex-wrap md:gap-[30px] md:h-[107px] md:overflow-hidden;
+
+    &.active {
+      @apply md:h-auto;
+    }
+  }
+
+  &__item {
+    @apply text-center w-[63px] h-[63px] box-border cursor-pointer;
+    // @apply md:w-[115px] md:h-[44px] md:flex md:justify-center md:gap-[10px] md:items-center md:rounded-full md:bg-white;
+
+    &.active {
+      @apply text-white;
+    }
+
+    &:nth-child(1) {
+      svg {
+        @apply h-[70%];
+      }
+    }
+
+    &:nth-child(2) {
+      svg {
+        @apply h-[70%];
+      }
+    }
+  }
+
+  &__wrapper {
+    @apply w-[56px] h-[56px] rounded-[50%] flex items-center justify-center mx-auto overflow-hidden border border-solid;
+    // @apply md:w-[115px] md:h-[44px] md:flex md:justify-center md:gap-[10px] md:items-center md:rounded-full;
+
+    img {
+      @apply max-w-full h-full object-cover;
+      // @apply md:w-[34px] md:h-[34px] md:rounded-full;
+    }
+  }
+
+  span {
+    @apply mt-[8px] font-medium text-[12px] text-center block;
+    // @apply md:mt-0 md:text-[10px];
+  }
+}
+
+.categories {
+  scrollbar-width: none; /* Для Firefox */
+}
+
+.categories::-webkit-scrollbar {
+  display: none; /* Для Chrome, Safari и других Webkit-браузеров */
+}

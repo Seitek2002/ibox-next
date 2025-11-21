@@ -1,0 +1,118 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&display=swap");
+
+/* Local Benzin font faces (served from public/assets/fonts) */
+@font-face {
+  font-family: "Benzin";
+  src: url("/assets/fonts/Benzin-ExtraBold.eot");
+  src:
+    local("☞Benzin ExtraBold"),
+    local("Benzin-ExtraBold"),
+    url("/assets/fonts/Benzin-ExtraBold.eot?#iefix") format("embedded-opentype"),
+    url("/assets/fonts/Benzin-ExtraBold.woff2") format("woff2"),
+    url("/assets/fonts/Benzin-ExtraBold.woff") format("woff"),
+    url("/assets/fonts/Benzin-ExtraBold.ttf") format("truetype");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Benzin";
+  src: url("/assets/fonts/Benzin-Medium.eot");
+  src:
+    local("☞Benzin Medium"),
+    local("Benzin-Medium"),
+    url("/assets/fonts/Benzin-Medium.eot?#iefix") format("embedded-opentype"),
+    url("/assets/fonts/Benzin-Medium.woff2") format("woff2"),
+    url("/assets/fonts/Benzin-Medium.woff") format("woff"),
+    url("/assets/fonts/Benzin-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Benzin";
+  src: url("/assets/fonts/Benzin-Bold.eot");
+  src:
+    local("☞Benzin Bold"),
+    local("Benzin-Bold"),
+    url("/assets/fonts/Benzin-Bold.eot?#iefix") format("embedded-opentype"),
+    url("/assets/fonts/Benzin-Bold.woff2") format("woff2"),
+    url("/assets/fonts/Benzin-Bold.woff") format("woff"),
+    url("/assets/fonts/Benzin-Bold.ttf") format("truetype");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Benzin";
+  src: url("/assets/fonts/Benzin-Semibold.eot");
+  src:
+    local("☞Benzin Semibold"),
+    local("Benzin-Semibold"),
+    url("/assets/fonts/Benzin-Semibold.eot?#iefix") format("embedded-opentype"),
+    url("/assets/fonts/Benzin-Semibold.woff2") format("woff2"),
+    url("/assets/fonts/Benzin-Semibold.woff") format("woff"),
+    url("/assets/fonts/Benzin-Semibold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Benzin";
+  src: url("/assets/fonts/Benzin-Regular.eot");
+  src:
+    local("☞Benzin Regular"),
+    local("Benzin-Regular"),
+    url("/assets/fonts/Benzin-Regular.eot?#iefix") format("embedded-opentype"),
+    url("/assets/fonts/Benzin-Regular.woff2") format("woff2"),
+    url("/assets/fonts/Benzin-Regular.woff") format("woff"),
+    url("/assets/fonts/Benzin-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Tailwind v4 entrypoint */
+@import "tailwindcss";
+
+@theme inline {
+  /* Fonts */
+  --font-benzin: "Benzin", sans-serif;
+  --font-inter: "Inter", sans-serif;
+  --font-baloo: "Baloo 2", sans-serif;
+
+  /* Colors aligned to original ishop (Tailwind v3 gray scale and brand purple) */
+  --color-purple-600: #854C9D;
+  --color-purple-700: #6f3f90;
+
+  --color-gray-50:  #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+
+  /* Commonly used in UI hints and borders in ishop */
+  --color-emerald-600: #00BFB2;
+  --color-neutral-100: #EFEFEF;
+  --color-neutral-200: #E1E2E5;
+
+  /* Whites and basic */
+  --color-white: #ffffff;
+  --color-black: #000000;
+}
+
+/* Ensure base text/background match original ishop */
+html, body {
+  background-color: #ffffff;
+  color: var(--color-gray-900);
+  font-family: var(--font-inter);
+}
+
+/* Third-party styles used by the app */
+@import "swiper/swiper-bundle.css";

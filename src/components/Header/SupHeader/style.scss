@@ -1,0 +1,67 @@
+.header {
+  &__content {
+    @apply flex items-center justify-between;
+  }
+
+  .logo {
+    @apply flex items-center gap-2;
+
+    span {
+      @apply font-baloo text-base font-bold;
+    }
+  }
+
+  .language {
+    @apply relative;
+
+    &__wrapper {
+      @apply absolute left-0 top-[31px] w-[61px] h-0 flex items-center flex-wrap p-0 justify-center rounded-[8px] z-10 overflow-hidden box-border gap-[4px];
+      transition: 0.3s;
+
+      &.active {
+        @apply h-[57px] py-[5px] px-[4px] top-[37px];
+        border: 1px solid #efefef;
+        transition: 0.3s;
+      }
+    }
+
+    &__item {
+      @apply text-[12px] font-[500] cursor-pointer w-full text-center;
+    }
+
+    &-selected {
+      @apply h-[32px] w-[61px] rounded-[8px] px-[12px] py-[4px] text-[12px] font-[500] flex gap-[4px] items-center justify-center cursor-pointer;
+
+      img {
+        transition: 0.3s all;
+      }
+
+      &.active {
+        transition: 0.3s all;
+        img {
+          transform: rotate(180deg);
+          transition: 0.3s all;
+        }
+      }
+    }
+
+    &.active {
+      &::after {
+        content: '';
+        @apply absolute w-[37px] h-[2px] bg-[#EFEFEF] top-[64px] left-[13px] z-[11];
+      }
+    }
+  }
+
+  &__search {
+    @apply w-2/4 hidden gap-[10px] py-2 px-2 rounded-[8px] md:flex;
+
+    input {
+      @apply rounded-none bg-transparent flex-1 outline-none;
+
+      &::-webkit-input-placeholder {
+        @apply text-[#090A0B];
+      }
+    }
+  }
+}

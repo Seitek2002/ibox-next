@@ -1,0 +1,7 @@
+.hero {
+  @apply py-[20px];
+
+  &__item {
+    @apply rounded-lg pl-[24px] overflow-hidden w-full h-[100px] md:h-[270px] flex flex-col justify-center bg-cover bg-right bg-no-repeat;
+  }
+}

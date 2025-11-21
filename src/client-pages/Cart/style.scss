@@ -1,0 +1,220 @@
+.cart {
+  @apply min-h-[100dvh] pb-[80px] pt-[50px] relative;
+
+  h4 {
+    @apply text-[14px];
+  }
+
+  .required {
+    @apply text-[12px] font-semibold;
+  }
+
+  &__header {
+    @apply flex items-center justify-between fixed top-0 p-[12px] left-1/2 w-full max-w-[1140px] bg-[#F1F2F3] transform -translate-x-1/2 z-[2];
+
+    h3 {
+      @apply font-semibold text-[24px];
+    }
+  }
+
+  &__top {
+    @apply bg-white text-center mt-[12px] py-[12px] text-[16px] font-bold rounded-[10px];
+  }
+
+  &__items {
+    @apply bg-white p-[12px] rounded-[12px] mt-[20px];
+  }
+
+  &__contacts {
+    @apply bg-white p-[12px] rounded-[12px] mt-[20px];
+
+    input {
+      @apply border-[1px] border-[#E1E2E5] rounded-[8px] w-full mb-[8px] py-[12px] px-[16px] text-[16px];
+    }
+  }
+
+  &__promo {
+    // Стилевой блок для секции промокода, чтобы инпут выглядел как остальные
+    input {
+      @apply border-[1px] border-[#E1E2E5] rounded-[8px] w-full mb-[8px] py-[12px] px-[16px] text-[14px];
+    }
+  }
+
+  // Delivery info banner (color accent подставляется инлайном из colorTheme)
+  &__delivery-info {
+    @apply p-[12px] flex items-center gap-[12px] bg-white rounded-[12px];
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  }
+
+  &__delivery-icon {
+    @apply w-[32px] h-[32px] rounded-full flex items-center justify-center;
+    border-width: 2px;
+    img {
+      @apply w-[18px] h-[18px];
+    }
+  }
+
+  &__delivery-text {
+    @apply text-[14px] leading-[18px];
+  }
+
+  &__order-type {
+    @apply flex justify-between gap-[8px] mt-[20px];
+
+    &-wrapper {
+      @apply flex items-center gap-[16px] py-[19px] px-[16px] w-[50%] rounded-[8px] text-center text-[14px] md:text-[14px];
+      border: 2px solid;
+    }
+
+    // &-checkbox {
+    //   @apply w-[20px] h-[20px] rounded-[50%];
+    //   border: 1px solid;
+    // }
+  }
+
+  &__sum {
+    @apply p-[12px] rounded-[12px] mt-[20px] mb-[12px];
+
+    &-wrapper {
+      @apply overflow-hidden;
+      transition: 0.2s;
+
+      &.active {
+        overflow: unset;
+      }
+    }
+
+    &-top {
+      @apply flex items-center justify-between font-[500] text-[14px] mb-[16px];
+    }
+
+    &-img {
+      &.active {
+        transform: rotate(180deg);
+      }
+    }
+
+    &-item {
+      @apply flex items-center justify-between font-[500] text-[12px] leading-[13px] py-[8px];
+    }
+
+    &-total {
+      @apply font-[500] text-[12px] leading-[24px];
+    }
+
+    &-ress {
+      @apply flex items-center justify-between font-[500] text-[14px] pt-[16px];
+      /* Explicit color to avoid fallback to currentColor overriding Tailwind utility */
+      border-top: 1px solid #f3f3f3;
+    }
+  }
+
+  &__forgot {
+    @apply my-[20px];
+
+    &-wrapper {
+      @apply grid grid-cols-2 gap-[8px] mt-[12px] md:grid-cols-4;
+    }
+
+    &-cart {
+      @apply px-[4px] pt-[4px] pb-[8px] w-[114px] rounded-[12px] relative;
+    }
+
+    &-title {
+      @apply flex items-center font-[600] text-[24px];
+    }
+
+    &-img {
+      @apply w-[106px] h-[86px] rounded-[16px];
+    }
+
+    &-price {
+      @apply font-[600] text-[16px];
+    }
+
+    &-weight {
+      @apply font-[500] text-[14px];
+    }
+
+    &-info {
+      @apply mt-[8px] mb-[4px];
+    }
+
+    &-name {
+      @apply line-clamp-2 font-[500] text-[16px] leading-[17px];
+    }
+  }
+
+  &__footer {
+    @apply bg-white p-[12px] pb-[30px] rounded-[12px] mt-[20px] fixed bottom-0 left-0 w-full z-[5];
+
+    button {
+      @apply w-full py-[16px] rounded-[12px] text-white;
+
+      &:disabled {
+        @apply opacity-50 cursor-not-allowed;
+      }
+    }
+  }
+
+  &__empty {
+    @apply text-center rounded-[12px] mt-[10px] p-[12px] bg-white flex flex-col items-center;
+
+    svg {
+      @apply max-w-full;
+    }
+
+    button {
+      @apply w-full py-[16px] rounded-[12px];
+    }
+  }
+
+  &__server {
+    @apply rounded-[12px] p-[12px] mb-[100px];
+
+    &-title {
+      @apply font-[600] text-[24px];
+    }
+
+    &-info {
+      @apply flex items-center gap-[13px] mt-[8px] mb-[16px];
+    }
+
+    &-ava {
+      @apply w-[36px] h-[36px] overflow-hidden;
+
+      img {
+        @apply w-full;
+      }
+    }
+
+    &-inner {
+      @apply flex flex-col gap-[4px];
+    }
+
+    &-name {
+      @apply font-[700] text-[14px];
+    }
+
+    &-job {
+      @apply text-[12px] font-[400];
+    }
+
+    &-wrapper {
+      @apply flex items-center gap-[8px] flex-wrap;
+    }
+
+    &-item {
+      @apply w-[62px] h-[56px] rounded-[50%] flex items-center justify-center cursor-pointer text-[12px] font-[400];
+    }
+    @media screen and (min-width: 768px) {
+      @apply mb-0;
+    }
+  }
+
+  .error-message {
+    color: #e63a3a;
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+}

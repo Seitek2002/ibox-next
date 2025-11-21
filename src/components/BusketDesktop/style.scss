@@ -1,0 +1,27 @@
+.busket {
+  @apply rounded-[12px] p-[12px];
+
+  &__header {
+    @apply flex items-center justify-between mb-[12px];
+
+    h2 {
+      @apply text-[24px] font-semibold;
+    }
+  }
+
+  &__content {
+    @apply bg-white p-[12px] rounded-[12px] max-h-[500px] overflow-auto;
+  }
+
+  .table-num {
+    @apply text-[16px] font-bold bg-[#F1F2F3] py-[12px] mb-[12px] rounded-[8px] text-center;
+  }
+
+  button {
+    @apply py-[16px] w-full rounded-[12px] text-white;
+
+    &:disabled {
+      @apply opacity-50 cursor-not-allowed;
+    }
+  }
+}

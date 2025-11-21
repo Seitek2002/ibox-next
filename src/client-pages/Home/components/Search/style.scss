@@ -1,0 +1,31 @@
+.search {
+  @apply fixed top-0 pt-[12px] left-0 bg-[#f1f2f3] min-h-[100dvh] z-20 w-full px-[16px]  overflow-auto;
+
+  &__top {
+    @apply flex items-center justify-between;
+
+    label {
+      @apply px-[10px] box-border flex items-center flex-1 bg-white rounded gap-[8px];
+
+      input {
+        @apply py-[16px] outline-none;
+      }
+    }
+  }
+
+  &__categories {
+    @apply mt-[24px];
+
+    h3 {
+      @apply text-[16px] font-semibold;
+    }
+  }
+
+  .categories {
+    @apply flex flex-wrap items-center gap-[8px] overflow-visible;
+  }
+
+  &__catalog {
+    @apply mt-[24px] grid grid-cols-2 gap-[12px] max-h-svh pb-40 overflow-auto;
+  }
+}
