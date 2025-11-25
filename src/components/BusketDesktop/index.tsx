@@ -4,9 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { useAppSelector } from 'hooks/useAppSelector';
 import { vibrateClick } from 'utils/haptics';
-import { getTodayScheduleWindow, isOutsideWorkTime } from 'utils/timeUtils';
 import BusketCard from 'components/Cards/Cart';
-import WorkTimeModal from 'components/WorkTimeModal';
 
 
 const BusketDesktop = ({
@@ -27,7 +25,6 @@ const BusketDesktop = ({
   const cart = useAppSelector((state) => state.yourFeature.cart);
   const location = useLocation();
 
-  const [showWorkTimeModal, setShowWorkTimeModal] = useState(false);
 
   // Stock limit toast (top-right)
   const [showStockToast, setShowStockToast] = useState(false);
@@ -50,14 +47,6 @@ const BusketDesktop = ({
 
   const handleClick = () => {
     vibrateClick();
-    const { window: todayWindow, isClosed } = getTodayScheduleWindow(
-      venueData?.schedules,
-      venueData?.schedule
-    );
-    if (isClosed || isOutsideWorkTime(todayWindow)) {
-      setShowWorkTimeModal(true);
-      return;
-    }
 
     if (location.pathname === '/cart') {
       if (createOrder) createOrder();
@@ -76,10 +65,6 @@ const BusketDesktop = ({
 
   return (
     <>
-      <WorkTimeModal
-        isShow={showWorkTimeModal}
-        onClose={() => setShowWorkTimeModal(false)}
-      />
       {showStockToast && (
         <div
           style={{

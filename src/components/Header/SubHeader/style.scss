@@ -19,9 +19,6 @@
         @apply font-bold text-[16px] max-w-[180px] md:max-w-[260px] truncate;
     }
 
-    .schedule {
-        @apply font-medium text-[#626576] text-[12px] max-w-[180px] md:max-w-[260px] truncate;
-    }
 
     .table {
         @apply text-[10px] font-medium text-[#626576] bg-[#F9F9F9] p-[8px] rounded-[8px];

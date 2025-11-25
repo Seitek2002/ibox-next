@@ -11,7 +11,6 @@ import { useAppDispatch } from 'hooks/useAppDispatch';
 import { useAppSelector } from 'hooks/useAppSelector';
 import { vibrateClick } from 'utils/haptics';
 import { loadUsersDataFromStorage } from 'utils/storageUtils';
-import { getTodayScheduleWindow, isOutsideWorkTime } from 'utils/timeUtils';
 import {
   ContactsForm,
   DeliveryInfoBanner,
@@ -30,7 +29,6 @@ import CartLoader from 'components/CartLoader';
 import ClearCartModal from 'components/ClearCartModal';
 import FoodDetail from 'components/FoodDetail';
 import PointsModal from 'components/PointsModal';
-import WorkTimeModal from 'components/WorkTimeModal';
 
 
 import { useMask } from '@react-input/mask';
@@ -95,7 +93,6 @@ const Cart: React.FC = () => {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const [wrapperHeight, setWrapperHeight] = useState(0);
   const [clearCartModal, setClearCartModal] = useState(false);
-  const [showWorkTimeModal, setShowWorkTimeModal] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   // Stock limit toast (top-right)
   const [showStockToast, setShowStockToast] = useState(false);
@@ -305,16 +302,6 @@ const Cart: React.FC = () => {
 
     setIsLoading(true);
 
-    // Block ordering outside working hours (weekly schedules aware)
-    const { window: todayWindow, isClosed } = getTodayScheduleWindow(
-      venueData?.schedules,
-      venueData?.schedule
-    );
-    if (isClosed || isOutsideWorkTime(todayWindow)) {
-      setShowWorkTimeModal(true);
-      setIsLoading(false);
-      return;
-    }
 
     console.log('Promo code:', promoCode);
     const orderProducts = cart.map((item) => {
@@ -746,10 +733,6 @@ const Cart: React.FC = () => {
           }
         />
         <ClearCartModal isShow={clearCartModal} setActive={setClearCartModal} />
-        <WorkTimeModal
-          isShow={showWorkTimeModal}
-          onClose={() => setShowWorkTimeModal(false)}
-        />
         {/* No-points info modal */}
         <NoPointsModal
           showNoPoints={showNoPoints}

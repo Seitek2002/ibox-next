@@ -7,12 +7,10 @@ import { statusMessages } from 'client-pages/Order/enums';
 import { useGetOrdersQuery } from 'api/Orders.api';
 import { IOrder } from 'types/orders.types';
 import { vibrateClick } from 'utils/haptics';
-import { isOutsideWorkTime } from 'utils/timeUtils';
 import { wsOrdersUrl } from 'utils/endpoints';
 
 import offer1 from 'assets/images/OrderStatus/Offer-1.png';
 import offer2 from 'assets/images/OrderStatus/Offer-2.png';
-import offer3 from 'assets/images/OrderStatus/schedule-status.png';
 
 
 
@@ -97,22 +95,6 @@ const Hero = () => {
         modules={[Pagination]}
         className='hero-swiper'
       >
-        {isOutsideWorkTime(venue.schedule || '00:00-00:00') && (
-          <SwiperSlide>
-            <div
-              className='hero__item'
-              style={{
-                backgroundImage: `url(${offer3})`,
-              }}
-            >
-              <p
-                className={`text-base md:text-[32px] max-w-[60%] font-bold text-[#a9a9a9]`}
-              >
-                Сейчас нерабочее время
-              </p>
-            </div>
-          </SwiperSlide>
-        )}
 
         {orders?.map((order) => {
           const { color } = getStatusData(order.serviceMode, order.status);
