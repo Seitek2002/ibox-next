@@ -4,13 +4,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { useGetVenueQuery } from 'api/Venue.api';
 import { useAppDispatch } from 'hooks/useAppDispatch';
-import { useAppSelector } from 'hooks/useAppSelector';
 import { vibrateClick } from 'utils/haptics';
 import { loadVenueFromStorage } from 'utils/storageUtils';
 import Header from 'src/components/Header/SupHeader';
 
 import { clearCart, setVenue } from 'src/store/yourFeatureSlice';
-import type { IVenues } from 'types/venues.types';
 
 const SelectOrderType = () => {
   const { t } = useTranslation();
@@ -18,9 +16,8 @@ const SelectOrderType = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { data } = useGetVenueQuery({ venueSlug: venue || '', spotId: Number(venueId) });
-  const colorTheme = useAppSelector(
-    (state) => state.yourFeature.venue.colorTheme
-  );
+  // Fallback theme color for hidden UI (to avoid TS errors on removed selector)
+  const colorTheme = '#875AFF';
 
   useEffect(() => {
     const loadedVenue = loadVenueFromStorage();

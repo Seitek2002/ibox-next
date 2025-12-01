@@ -36,17 +36,21 @@ function createDummyWebSocket(url: string): WebSocket {
     onerror: null,
     onclose: null,
     close: () => void 0,
-    send: (_data: any) => void 0,
-    addEventListener: (_type: string, _listener: any, _opts?: any) => void 0,
-    removeEventListener: (_type: string, _listener: any, _opts?: any) => void 0,
-    dispatchEvent: (_e: any) => false,
+    send: () => void 0,
+    addEventListener: () => void 0,
+    removeEventListener: () => void 0,
+    dispatchEvent: () => false,
   };
 
   // Fire error/close asynchronously (microtask) to avoid interfering with caller flow
   Promise.resolve().then(() => {
     try {
-      dummy.onerror && dummy.onerror(new Event('error'));
-      dummy.onclose && dummy.onclose(new CloseEvent('close'));
+      if (typeof dummy.onerror === 'function') {
+        dummy.onerror(new Event('error'));
+      }
+      if (typeof dummy.onclose === 'function') {
+        dummy.onclose(new CloseEvent('close'));
+      }
     } catch {}
   });
 
@@ -126,7 +130,6 @@ export default function WsGuard() {
         attempted.add(urlStr);
       }
       // Proceed with a real connection
-      // eslint-disable-next-line new-cap
       return protocols !== undefined
         ? new OriginalWS(urlStr as any, protocols as any)
         : new OriginalWS(urlStr as any);

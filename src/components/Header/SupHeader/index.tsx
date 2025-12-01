@@ -1,6 +1,5 @@
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 
 import { vibrateClick } from 'utils/haptics';
 import { useAppSelector } from 'hooks/useAppSelector';
@@ -12,7 +11,6 @@ const arrowIcon = '/assets/icons/Header/arrow.svg';
 const search = '/assets/icons/Header/search.svg';
 const logoIcon = '/assets/icons/header-logo.svg';
 
-import { useGetVenueQuery } from 'src/api';
 
 const LANGUAGES = ['RU', 'KG', 'ENG'];
 const LANGUAGE_MAP: Record<string, string> = {
@@ -28,7 +26,6 @@ interface IProps {
 
 const SupHeader: FC<IProps> = ({ searchText, setSearchText }) => {
   const { i18n } = useTranslation();
-  const { venue, venueId } = useParams();
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [isPhoneModalOpen, setPhoneModalOpen] = useState(false);
 
@@ -41,10 +38,6 @@ const SupHeader: FC<IProps> = ({ searchText, setSearchText }) => {
     vibrateClick();
     setIsLanguageOpen((prev) => !prev);
   };
-  const { data } = useGetVenueQuery({
-    venueSlug: venue || '',
-    spotId: Number(venueId),
-  });
 
   const selectLanguage = (language: string) => {
     vibrateClick();

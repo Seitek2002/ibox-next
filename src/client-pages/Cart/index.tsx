@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
-import { useGetClientBonusQuery } from 'api/Client.api';
 import { usePostOrdersMutation } from 'api/Orders.api';
 import { useGetProductsQuery } from 'api/Products.api';
 import { IReqCreateOrder } from 'types/orders.types';
@@ -26,7 +25,6 @@ import CartLoader from 'components/CartLoader';
 import ClearCartModal from 'components/ClearCartModal';
 import FoodDetail from 'components/FoodDetail';
 
-
 import { useMask } from '@react-input/mask';
 import { clearCart, setUsersData } from 'src/store/yourFeatureSlice';
 
@@ -39,7 +37,6 @@ const Cart: React.FC = () => {
   const [isShow, setIsShow] = useState(false);
   const cart = useAppSelector((state) => state.yourFeature.cart);
   const [isLoading, setIsLoading] = useState(false);
-  const [showNoPoints, setShowNoPoints] = useState(false);
   const colorTheme = useAppSelector(
     (state) => state.yourFeature.venue?.colorTheme
   );
@@ -75,11 +72,14 @@ const Cart: React.FC = () => {
   const [promoCode, setPromoCode] = useState('');
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [showPromoInput, setShowPromoInput] = useState(false);
-  const storedPromo = localStorage.getItem('promoCode') || '';
-  if (storedPromo) {
-    setPromoCode(storedPromo);
-    setShowPromoInput(true);
-  }
+  const storedPromo = typeof window !== 'undefined' ? (localStorage.getItem('promoCode') || '') : '';
+  useEffect(() => {
+    if (storedPromo) {
+      setPromoCode(storedPromo);
+      setShowPromoInput(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [phoneError, setPhoneError] = useState('');
   const [addressError, setAddressError] = useState('');
@@ -108,17 +108,6 @@ const Cart: React.FC = () => {
       1800
     );
   };
-
-  const [isPointsModalOpen, setIsPointsModalOpen] = useState(false);
-  const { data: bonusData } = useGetClientBonusQuery(
-    { phone: phoneNumber, organizationSlug: venueData?.slug },
-    { skip: !phoneNumber || !venueData?.slug }
-  );
-  const availablePoints = Math.max(0, Math.floor(bonusData?.balance ?? 0));
-  const [usePoints, setUsePoints] = useState(false);
-  const [bonusPoints, setBonusPoints] = useState(0);
-  const [otpCode, setOtpCode] = useState<string>('');
-  const lastOrderBaseRef = useRef<IReqCreateOrder | null>(null);
 
   const getHashLS = () => {
     try {
@@ -272,9 +261,20 @@ const Cart: React.FC = () => {
       setPhoneError('');
     }
 
-    const isDelivery = false;
-
     return !hasError;
+  };
+
+  // Normalize paymentUrl returned from backend (may be string or object)
+  const normalizePaymentUrl = (pu: unknown): string | null => {
+    try {
+      if (typeof pu === 'string') return pu;
+      if (pu && typeof pu === 'object') {
+        const anyPu = pu as { url?: unknown; href?: unknown };
+        if (typeof anyPu.url === 'string') return anyPu.url;
+        if (typeof anyPu.href === 'string') return anyPu.href;
+      }
+    } catch {}
+    return null;
   };
 
   const handleOrder = async () => {
@@ -288,8 +288,9 @@ const Cart: React.FC = () => {
 
     setIsLoading(true);
 
-
+    // Promo can be used on backend if supported in future; retained for UX
     console.log('Promo code:', promoCode);
+
     const orderProducts = cart.map((item) => {
       if (item.modificators?.id) {
         return {
@@ -353,13 +354,9 @@ const Cart: React.FC = () => {
       ...acc,
       spot: selectedSpot,
       organizationSlug: venueData.slug,
-      useBonus: usePoints || undefined,
-      bonus: usePoints ? Math.min(bonusPoints, maxUsablePoints) : undefined,
-      code: promoCode?.trim() || otpCode || undefined,
       hash: hashLS,
       refAgent: getRefAgentLS(),
     };
-    lastOrderBaseRef.current = payloadBase;
 
     try {
       const res = await postOrder({
@@ -378,7 +375,9 @@ const Cart: React.FC = () => {
         try {
           // Clear cart when the page is actually leaving (more reliable on iOS)
           const onPageHide = () => {
-            try { dispatch(clearCart()); } catch {}
+            try {
+              dispatch(clearCart());
+            } catch {}
             window.removeEventListener('pagehide', onPageHide);
           };
           window.addEventListener('pagehide', onPageHide);
@@ -390,7 +389,7 @@ const Cart: React.FC = () => {
             window.location.href = url;
           }
           return; // Do not continue in this handler
-        } catch (e) {
+        } catch {
           setServerError('Не удалось перейти по платежной ссылке');
           setIsLoading(false);
         }
@@ -433,14 +432,8 @@ const Cart: React.FC = () => {
   const deliveryFreeFrom = null as number | null;
   const deliveryFee = 0;
   const hasFreeDeliveryHint = false;
-  const total =
-    Math.round((subtotal + serviceFeeAmt) * 100) / 100;
-  const maxUsablePoints = Math.min(availablePoints, Math.floor(total));
-  const appliedBonus = usePoints ? Math.min(bonusPoints, maxUsablePoints) : 0;
-  const displayTotal = Math.max(
-    0,
-    Math.round((total - appliedBonus) * 100) / 100
-  );
+  const total = Math.round((subtotal + serviceFeeAmt) * 100) / 100;
+  const displayTotal = total;
 
   // Smooth auto-height for details dropdown (no hardcoded px)
   useEffect(() => {
@@ -465,198 +458,6 @@ const Cart: React.FC = () => {
       setActiveIndex(0);
     }
   }, [effectiveUsersType, orderTypes]);
-
-  const requestOtpForPoints = async (v: number) => {
-    try {
-      if (!v || v <= 0) {
-        return;
-      }
-      const orderProducts = cart.map((item) => {
-        if (item.modificators?.id) {
-          return {
-            product: +item.id.split(',')[0],
-            count: +item.quantity,
-            modificator: item.modificators.id,
-          };
-        } else {
-          return {
-            product: +item.id.split(',')[0],
-            count: +item.quantity,
-          };
-        }
-      });
-
-
-      const accBase: IReqCreateOrder = {
-        phone: phoneNumber
-          .replace('-', '')
-          .replace('(', '')
-          .replace(')', '')
-          .replace(' ', '')
-          .replace('+', '')
-          .replace(' ', ''),
-        orderProducts,
-        comment,
-        serviceMode: 1,
-        address: '',
-        spot: selectedSpot,
-        organizationSlug: venueData.slug,
-      };
-
-    if (venueData?.table?.tableNum) {
-      accBase.serviceMode = 1;
-    } else {
-      accBase.serviceMode = 2;
-    }
-
-      const hashLS = getHashLS();
-      const payloadBase: IReqCreateOrder = {
-        ...accBase,
-        spot: selectedSpot,
-        organizationSlug: venueData.slug,
-        useBonus: true,
-        bonus: Math.min(v, maxUsablePoints),
-        hash: hashLS,
-        refAgent: getRefAgentLS(),
-      };
-      lastOrderBaseRef.current = payloadBase;
-
-      const res = await postOrder({
-        body: payloadBase,
-        organizationSlug: venueData.slug,
-        spotId: selectedSpot,
-      }).unwrap();
-
-      if (res?.phoneVerificationHash) {
-        try {
-          localStorage.setItem(
-            'phoneVerificationHash',
-            res.phoneVerificationHash
-          );
-          localStorage.setItem('hash', res.phoneVerificationHash);
-        } catch {
-          /* ignore */
-        }
-      }
-    } catch (err: unknown) {
-      try {
-        setServerError(getErrorMessage(err));
-        setTimeout(() => setServerError(null), 5000);
-      } catch {
-        /* ignore */
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const requestPhoneVerificationHash = async (code: string, v: number) => {
-    try {
-      const orderProducts = cart.map((item) => {
-        if (item.modificators?.id) {
-          return {
-            product: +item.id.split(',')[0],
-            count: +item.quantity,
-            modificator: item.modificators.id,
-          };
-        } else {
-          return {
-            product: +item.id.split(',')[0],
-            count: +item.quantity,
-          };
-        }
-      });
-
-
-      const accBase: IReqCreateOrder = {
-        phone: phoneNumber
-          .replace('-', '')
-          .replace('(', '')
-          .replace(')', '')
-          .replace(' ', '')
-          .replace('+', '')
-          .replace(' ', ''),
-        orderProducts,
-        comment,
-        serviceMode: 1,
-        address: '',
-        spot: selectedSpot,
-      };
-
-      if (venueData?.table?.tableNum) {
-        accBase.serviceMode = 1;
-      } else {
-        accBase.serviceMode = 2;
-      }
-
-      const hashLS = getHashLS();
-      const payloadBase: IReqCreateOrder = {
-        ...accBase,
-        spot: selectedSpot,
-        organizationSlug: venueData.slug,
-        useBonus: true,
-        bonus: Math.min(v, maxUsablePoints),
-        code,
-        hash: hashLS,
-        refAgent: getRefAgentLS(),
-      };
-
-      lastOrderBaseRef.current = payloadBase;
-
-      const res = await postOrder({
-        body: payloadBase,
-        organizationSlug: venueData.slug,
-        spotId: selectedSpot,
-      }).unwrap();
-
-      if (res?.phoneVerificationHash) {
-        try {
-          localStorage.setItem(
-            'phoneVerificationHash',
-            res.phoneVerificationHash
-          );
-          localStorage.setItem('hash', res.phoneVerificationHash);
-        } catch {
-          /* ignore */
-        }
-      }
-    } catch (err: unknown) {
-      try {
-        setServerError(getErrorMessage(err));
-        setTimeout(() => setServerError(null), 5000);
-      } catch {
-        /* ignore */
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Normalize paymentUrl returned from backend (may be string or object)
-  const normalizePaymentUrl = (pu: unknown): string | null => {
-    try {
-      if (typeof pu === 'string') return pu;
-      if (pu && typeof pu === 'object') {
-        const anyPu = pu as { url?: unknown; href?: unknown };
-        if (typeof anyPu.url === 'string') return anyPu.url;
-        if (typeof anyPu.href === 'string') return anyPu.href;
-      }
-    } catch {}
-    return null;
-  };
-
-  const openPointsFlow = () => {
-    const digits = phoneNumber.replace(/\D/g, '');
-    if (!digits || digits.length < 12) {
-      try {
-        setPhoneError('Тут нужно минимум 12 символов');
-        const el = document.getElementById('phoneNumber');
-        el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      } catch {}
-      return;
-    }
-    setIsPointsModalOpen(true);
-  };
 
   useEffect(() => {
     return () => {
@@ -690,7 +491,7 @@ const Cart: React.FC = () => {
           }
         />
         <ClearCartModal isShow={clearCartModal} setActive={setClearCartModal} />
-        
+
         {isLoading && <CartLoader />}
 
         <HeaderBar
@@ -720,7 +521,7 @@ const Cart: React.FC = () => {
           </div>
         )}
 
-        {window.innerWidth < 768 && (
+        {typeof window !== 'undefined' && window.innerWidth < 768 && (
           <>
             {venueData?.table?.tableNum && (
               <div className='cart__top'>
@@ -748,7 +549,6 @@ const Cart: React.FC = () => {
           <div className='md:w-[50%]'>
             {cart.length > 0 ? (
               <>
-
                 <ContactsForm
                   t={t}
                   colorTheme={colorTheme}
@@ -766,10 +566,8 @@ const Cart: React.FC = () => {
                   setComment={setComment}
                 />
 
-
                 <SumDetails
                   t={t}
-                  colorTheme={colorTheme}
                   active={active}
                   setActive={setActive}
                   wrapperRef={wrapperRef}
@@ -779,14 +577,7 @@ const Cart: React.FC = () => {
                   deliveryFee={deliveryFee}
                   hasFreeDeliveryHint={hasFreeDeliveryHint}
                   deliveryFreeFrom={deliveryFreeFrom}
-                  availablePoints={availablePoints}
-                  usePoints={usePoints}
-                  setUsePoints={setUsePoints}
-                  maxUsablePoints={maxUsablePoints}
-                  setBonusPoints={setBonusPoints}
-                  onOpenPointsModal={openPointsFlow}
                   displayTotal={displayTotal}
-                  onShowNoPoints={() => setShowNoPoints(true)}
                 />
 
                 {!showPromoInput ? (
@@ -834,7 +625,7 @@ const Cart: React.FC = () => {
             )}
           </div>
 
-          {window.innerWidth >= 768 && (
+          {typeof window !== 'undefined' && window.innerWidth >= 768 && (
             <div className='busket flex-1'>
               <BusketDesktop
                 to='/order'
@@ -857,14 +648,14 @@ const Cart: React.FC = () => {
           )}
         />
 
-        {window.innerWidth < 768 && (
+        {typeof window !== 'undefined' && window.innerWidth < 768 && (
           <FooterBar
             disabled={!cart.length}
             colorTheme={colorTheme}
             onPay={handleOrder}
           />
         )}
-        
+
         {serverError && (
           <div
             style={{

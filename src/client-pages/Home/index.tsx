@@ -22,7 +22,6 @@ const Home = () => {
   const [search, onSearch] = useState(false);
   const [debouncedSearchText, setDebouncedSearchText] = useState(searchText);
 
-  const userData = loadUsersDataFromStorage();
   const [categoryTitle, setCategoryTitle] = useState<string>(t('allDishes'));
   const clearCartHandler = useCallback(() => {
     setActive((v) => !v);

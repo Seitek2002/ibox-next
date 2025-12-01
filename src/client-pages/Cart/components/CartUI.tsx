@@ -273,7 +273,6 @@ export const DeliveryInfoBanner: React.FC<{
 
 export const SumDetails: React.FC<{
   t: TFunc;
-  colorTheme?: string;
   active: boolean;
   setActive: (v: boolean) => void;
   wrapperRef: RefObject<HTMLDivElement | null>;
@@ -283,17 +282,9 @@ export const SumDetails: React.FC<{
   deliveryFee: number;
   hasFreeDeliveryHint: boolean;
   deliveryFreeFrom: number | null;
-  availablePoints: number;
-  usePoints: boolean;
-  setUsePoints: (v: boolean) => void;
-  maxUsablePoints: number;
-  setBonusPoints: (v: number) => void;
-  onOpenPointsModal: () => void;
   displayTotal: number;
-  onShowNoPoints: () => void;
 }> = ({
   t,
-  colorTheme,
   active,
   setActive,
   wrapperRef,
@@ -303,14 +294,7 @@ export const SumDetails: React.FC<{
   deliveryFee,
   hasFreeDeliveryHint,
   deliveryFreeFrom,
-  availablePoints,
-  usePoints,
-  setUsePoints,
-  maxUsablePoints,
-  setBonusPoints,
-  onOpenPointsModal,
   displayTotal,
-  onShowNoPoints,
 }) => {
   return (
     <div className='cart__sum bg-[#fff]'>
