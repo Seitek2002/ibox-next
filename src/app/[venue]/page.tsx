@@ -1,8 +1,17 @@
 "use client";
 
-import React from "react";
-import VenueGate from "@/client-pages/VenueGate";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
+/**
+ * If user opens /:venue without spotId, redirect to /scan
+ */
 export default function VenuePage() {
-  return <VenueGate />;
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    navigate("/scan", { replace: true });
+  }, [navigate]);
+
+  return null;
 }
