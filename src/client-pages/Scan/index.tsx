@@ -114,11 +114,15 @@ const Scan: FC = () => {
           <div className='w-full'>
             <p className='text-center text-xl mb-3'>Наведите на QR код устройства</p>
             {/* Always mount Scanner so iOS Safari can prompt permissions */}
-            <Scanner
-              onScan={handleScan}
-              onError={handleError}
-              constraints={constraints}
-            />
+            <div className='flex justify-center'>
+              <div className='origin-center scale-[0.8]'>
+                <Scanner
+                  onScan={handleScan}
+                  onError={handleError}
+                  constraints={constraints}
+                />
+              </div>
+            </div>
           </div>
         </div>
 
