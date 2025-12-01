@@ -12,9 +12,7 @@ const arrowIcon = '/assets/icons/Header/arrow.svg';
 const search = '/assets/icons/Header/search.svg';
 const logoIcon = '/assets/icons/header-logo.svg';
 
-
-import { Coins } from 'lucide-react';
-import { useGetClientBonusQuery, useGetVenueQuery } from 'src/api';
+import { useGetVenueQuery } from 'src/api';
 
 const LANGUAGES = ['RU', 'KG', 'ENG'];
 const LANGUAGE_MAP: Record<string, string> = {
@@ -60,19 +58,14 @@ const SupHeader: FC<IProps> = ({ searchText, setSearchText }) => {
 
   const usersData = useAppSelector((s) => s.yourFeature.usersData);
   const dispatch = useAppDispatch();
-  const phoneForBonus = (usersData?.phoneNumber || '').trim();
 
-  const { data: bonusData } = useGetClientBonusQuery(
-    { phone: phoneForBonus, organizationSlug: data?.slug || venue },
-    { skip: !phoneForBonus || !(data?.slug || venue) }
-  );
 
   return (
     <div className='header'>
       <div className='header__content'>
         <div className='logo'>
           <img src={logoIcon} width={30} alt='iMenu Logo' />
-          <span>ishop.kg</span>
+          <span>ibox.kg</span>
         </div>
 
         {setSearchText && (
@@ -88,19 +81,6 @@ const SupHeader: FC<IProps> = ({ searchText, setSearchText }) => {
           </label>
         )}
 
-        <div
-          className='call'
-          title='Баллы'
-          onClick={() => {
-            vibrateClick();
-            setPhoneModalOpen(true);
-          }}
-        >
-          <span className='text-[14px] font-bold text-center flex items-center gap-[8px]'>
-            <Coins size={20} />
-            <span className='mt-[4px]'>{bonusData?.balance ?? 0} <span className='hidden md:inline'>б.</span></span>
-          </span>
-        </div>
         <div className='language'>
           <button
             className={`language-selected bg-gray-100 ${
@@ -130,7 +110,13 @@ const SupHeader: FC<IProps> = ({ searchText, setSearchText }) => {
       </div>
       <PhoneModal
         open={isPhoneModalOpen}
-        defaultPhone={usersData?.phoneNumber ? (usersData.phoneNumber.startsWith('+') ? usersData.phoneNumber : `+${usersData.phoneNumber}`) : '+996'}
+        defaultPhone={
+          usersData?.phoneNumber
+            ? usersData.phoneNumber.startsWith('+')
+              ? usersData.phoneNumber
+              : `+${usersData.phoneNumber}`
+            : '+996'
+        }
         onClose={() => setPhoneModalOpen(false)}
         onSubmit={(p) => {
           const digits = (p || '').replace(/\D/g, '');

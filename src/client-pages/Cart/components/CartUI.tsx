@@ -8,7 +8,6 @@ const headerArrowIcon = '/assets/icons/Busket/header-arrow.svg';
 const priceArrow = '/assets/icons/Busket/price-arrow.svg';
 const deliveryIcon = '/assets/icons/Order/delivery.svg';
 
-import { Pencil } from 'lucide-react';
 
 type TFunc = (k: string, opts?: Record<string, unknown>) => string;
 
@@ -360,41 +359,6 @@ export const SumDetails: React.FC<{
         )}
       </div>
 
-      <div
-        className='cart__sum-ress border-[#f3f3f3]'
-        style={{ borderTop: '1px solid #f3f3f3' }}
-      >
-        <div className='flex items-center justify-between w-full'>
-          <label className='flex items-center gap-2 cursor-pointer'>
-            <input
-              type='checkbox'
-              checked={usePoints}
-              onChange={(e) => {
-                vibrateClick();
-                const checked = e.target.checked;
-                if (checked) {
-                  onOpenPointsModal();
-                } else {
-                  setUsePoints(false);
-                  setBonusPoints(0);
-                }
-              }}
-            />
-            <span>Использовать баллы?</span>
-          </label>
-          <div className='flex items-center gap-[8px]'>
-            {maxUsablePoints} б.
-            <Pencil
-              size={18}
-              className='cursor-pointer'
-              onClick={() => {
-                vibrateClick();
-                onOpenPointsModal();
-              }}
-            />
-          </div>
-        </div>
-      </div>
 
       <div className='cart__sum-ress border-[#f3f3f3]' style={{ borderTop: '1px solid #f3f3f3' }}>
         {t('empty.totalAmount')} <span>{displayTotal} c</span>

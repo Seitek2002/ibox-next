@@ -13,7 +13,7 @@ const Main = () => {
             <div className='flex items-center'>
               <div className='flex-shrink-0 flex gap-[10px]'>
                 <img className='h-8 w-8' src={logoIcon} alt='iMenu Logo' />
-                <h1 className='text-2xl font-bold text-[#854C9D]'>ishop.kg</h1>
+                <h1 className='text-2xl font-bold text-[#854C9D]'>ibox.kg</h1>
               </div>
             </div>
             <div className='flex items-center space-x-4'>
@@ -42,7 +42,9 @@ const Main = () => {
           <div className='text-center'>
             <h1 className='text-4xl md:text-6xl font-bold text-gray-900 mb-6'>
               Найдите лучшие
-              <span className='text-[#854C9D] block'>заведения Кыргызстана</span>
+              <span className='text-[#854C9D] block'>
+                заведения Кыргызстана
+              </span>
             </h1>
             <p className='text-xl text-gray-600 mb-8 max-w-3xl mx-auto'>
               Откройте для себя рестораны, кафе и другие заведения с подробными
@@ -64,15 +66,21 @@ const Main = () => {
             </div>
             <div className='grid grid-cols-1 md:grid-cols-3 gap-8 text-center'>
               <div className='bg-white p-6 rounded-xl shadow-sm'>
-                <div className='text-3xl font-bold text-[#854C9D] mb-2'>500+</div>
+                <div className='text-3xl font-bold text-[#854C9D] mb-2'>
+                  500+
+                </div>
                 <div className='text-gray-600'>Заведений</div>
               </div>
               <div className='bg-white p-6 rounded-xl shadow-sm'>
-                <div className='text-3xl font-bold text-[#854C9D] mb-2'>10K+</div>
+                <div className='text-3xl font-bold text-[#854C9D] mb-2'>
+                  10K+
+                </div>
                 <div className='text-gray-600'>Отзывов</div>
               </div>
               <div className='bg-white p-6 rounded-xl shadow-sm'>
-                <div className='text-3xl font-bold text-[#854C9D] mb-2'>50K+</div>
+                <div className='text-3xl font-bold text-[#854C9D] mb-2'>
+                  50K+
+                </div>
                 <div className='text-gray-600'>Пользователей</div>
               </div>
             </div>
@@ -367,9 +375,9 @@ const Main = () => {
                   <th className='py-4 px-2 text-lg font-semibold text-gray-700 border-b'>
                     Параметр
                   </th>
-              <th className='py-4 px-2 text-lg font-semibold text-[#854C9D] border-b'>
-                iMenu
-              </th>
+                  <th className='py-4 px-2 text-lg font-semibold text-[#854C9D] border-b'>
+                    iMenu
+                  </th>
                   <th className='py-4 px-2 text-lg font-semibold text-gray-500 border-b'>
                     Конкуренты
                   </th>
@@ -436,7 +444,9 @@ const Main = () => {
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>
           <div className='grid grid-cols-1 md:grid-cols-4 gap-8'>
             <div className='col-span-1 md:col-span-2'>
-              <h3 className='text-2xl font-bold text-[#854C9D] mb-4'>Ishop.kg</h3>
+              <h3 className='text-2xl font-bold text-[#854C9D] mb-4'>
+                ibox.kg
+              </h3>
               <p className='text-gray-300 mb-6 max-w-md'>
                 Ваш надежный гид по лучшим заведениям Кыргызстана. Находите
                 рестораны, кафе и другие места с подробными меню и честными
@@ -515,7 +525,7 @@ const Main = () => {
           </div>
           <div className='border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center'>
             <div className='text-gray-400 text-sm mb-4 md:mb-0'>
-              © 2024 ishop.kg. Все права защищены.
+              © 2024 ibox.kg. Все права защищены.
             </div>
           </div>
         </div>

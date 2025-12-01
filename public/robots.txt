@@ -1,4 +1,4 @@
-# robots.txt for ishop-next
+# robots.txt for ibox-next
 # Default: allow all crawlers to access the site
 # Block common non-public endpoints
 

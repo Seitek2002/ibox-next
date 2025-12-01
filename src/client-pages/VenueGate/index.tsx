@@ -35,22 +35,17 @@ const VenueGate: FC = () => {
   }, [location.search, pathname, navigate]);
 
   // Set order mode by URL:
-  // - "/:venue/:venueId/s" => pickup (type = 2) and set activeSpot = venueId
-  // - "/:venue" => delivery (type = 3)
-  // Note: table route is removed
+  // - "/:venue/:venueId" or "/:venue/:venueId/s" => pickup (type = 2) and set activeSpot = venueId
+  // - "/:venue" => keep existing activeSpot, still pickup (delivery removed)
   useEffect(() => {
-    const isPickup = pathname.endsWith('/s');
-    const spotId = venueId ? Number(venueId) : undefined;
-
-    const nextType = isPickup ? 2 : 3; // 2: Самовывоз, 3: Доставка
+    const spotIdNum = venueId ? Number(venueId) : NaN;
+    const hasSpotId = Number.isFinite(spotIdNum);
 
     const nextUsers = {
       ...usersData,
-      type: nextType,
-      activeSpot:
-        isPickup && typeof spotId === 'number' && !Number.isNaN(spotId)
-          ? spotId
-          : usersData?.activeSpot ?? 0,
+      // Delivery removed: always self-pickup
+      type: 2,
+      activeSpot: hasSpotId ? spotIdNum : (usersData?.activeSpot ?? 0),
     };
 
     if (usersData?.type !== nextUsers.type || usersData?.activeSpot !== nextUsers.activeSpot) {

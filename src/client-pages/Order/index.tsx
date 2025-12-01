@@ -15,7 +15,6 @@ import { statusMessages } from './enums';
 const headerArrowIcon = '/assets/icons/Busket/header-arrow.svg';
 const priceArrow = '/assets/icons/Busket/price-arrow.svg';
 
-
 // function formatCreatedAt(dateString: string) {
 //   const date = new Date(dateString);
 
@@ -74,7 +73,9 @@ const Order = () => {
   }, [order]);
 
   useEffect(() => {
-    const ws = new WebSocket(wsOrdersUrl({ phone: String(user.phoneNumber || ''), site: 'imenu' }));
+    const ws = new WebSocket(
+      wsOrdersUrl({ phone: String(user.phoneNumber || ''), site: 'imenu' })
+    );
 
     ws.onopen = () => {
       console.log('WebSocket connected');
@@ -207,7 +208,9 @@ const Order = () => {
                 </span>
               )}
               {data?.serviceMode == 2 && (
-                <span style={{ color: colorTheme }}>{t('orders.takeAway')}</span>
+                <span style={{ color: colorTheme }}>
+                  {t('orders.takeAway')}
+                </span>
               )}
               {data?.serviceMode == 3 && (
                 <span style={{ color: colorTheme }}>{t('empty.delivery')}</span>
@@ -230,7 +233,7 @@ const Order = () => {
                 <div className='font-bold text-[24px]'>
                   №{order?.id}
                   <div className='barcode'>
-                    <QRCode value={'ISHOP.KG/ORDERS/' + order?.id} />
+                    <QRCode value={'ibox.KG/ORDERS/' + order?.id} />
                   </div>
                 </div>
                 <div className='text-lg mt-[20px]'>

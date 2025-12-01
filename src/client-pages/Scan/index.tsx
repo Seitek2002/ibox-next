@@ -60,7 +60,7 @@ const Scan: FC = () => {
         } else if (name === 'SecurityError') {
           // likely insecure context
           setConstraints(undefined);
-        } else if (message?.toLowerCase?.().includes('not allowed')) {
+        } else if (message?.includes('not allowed')) {
           // keep constraints; user has to grant permissions
         } else {
           // generic fallback

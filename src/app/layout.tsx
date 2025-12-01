@@ -12,8 +12,8 @@ const geistInter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'ishop',
-  description: 'ishop — онлайн-меню и заказы',
+  title: 'ibox',
+  description: 'ibox — онлайн-меню и заказы',
   icons: {
     icon: '/assets/icons/header-logo.svg',
     shortcut: '/assets/icons/header-logo.svg',

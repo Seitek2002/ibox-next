@@ -13,22 +13,18 @@ import { vibrateClick } from 'utils/haptics';
 import { loadUsersDataFromStorage } from 'utils/storageUtils';
 import {
   ContactsForm,
-  DeliveryInfoBanner,
   FooterBar,
   HeaderBar,
   Recommended,
-  SpotsSelector,
   SumDetails,
 } from './components/CartUI';
 import Empty from './components/Empty';
-import NoPointsModal from './components/NoPointsModal';
 import BusketDesktop from 'components/BusketDesktop';
 import BusketCard from 'components/Cards/Cart';
 import CatalogCard from 'components/Cards/Catalog';
 import CartLoader from 'components/CartLoader';
 import ClearCartModal from 'components/ClearCartModal';
 import FoodDetail from 'components/FoodDetail';
-import PointsModal from 'components/PointsModal';
 
 
 import { useMask } from '@react-input/mask';
@@ -204,7 +200,7 @@ const Cart: React.FC = () => {
 
   const isSelfPickupRoute = useMemo(() => {
     try {
-      const mp = (localStorage.getItem('mainPage') || '').toLowerCase();
+      const mp = (localStorage.getItem('mainPage') || '');
       const parts = mp.split('/').filter(Boolean);
       if (parts.length) {
         // Самовывоз: наличие отдельного сегмента "s" (например, /:venue/:spotId/s/)
@@ -276,17 +272,7 @@ const Cart: React.FC = () => {
       setPhoneError('');
     }
 
-    const isDelivery = orderTypes[activeIndex]?.value === 3;
-    if (isDelivery) {
-      if (!address.trim() || address.trim().length < 4) {
-        setAddressError('Тут нужно минимум 4 символа');
-        hasError = true;
-        const el = document.getElementById('address');
-        el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      } else {
-        setAddressError('');
-      }
-    }
+    const isDelivery = false;
 
     return !hasError;
   };
@@ -357,7 +343,7 @@ const Cart: React.FC = () => {
         ...userData,
         phoneNumber: acc.phone,
         address,
-        type: currentType.value,
+        type: 2,
         activeSpot: selectedSpot,
       })
     );
@@ -443,21 +429,12 @@ const Cart: React.FC = () => {
     return acc + realPrice * item.quantity;
   }, 0);
   const serviceFeeAmt = subtotal * (venueData.serviceFeePercent / 100);
-  const isDeliveryType = orderTypes[activeIndex]?.value === 3;
-  const deliveryFreeFrom =
-    venueData?.deliveryFreeFrom != null
-      ? Number(venueData.deliveryFreeFrom)
-      : null;
-  const deliveryFixedFee = Number(venueData?.deliveryFixedFee || 0);
-  const deliveryFee = isDeliveryType
-    ? deliveryFreeFrom !== null && subtotal >= deliveryFreeFrom
-      ? 0
-      : deliveryFixedFee
-    : 0;
-  const hasFreeDeliveryHint =
-    isDeliveryType && deliveryFreeFrom !== null && subtotal < deliveryFreeFrom;
+  const isDeliveryType = false;
+  const deliveryFreeFrom = null as number | null;
+  const deliveryFee = 0;
+  const hasFreeDeliveryHint = false;
   const total =
-    Math.round((subtotal + serviceFeeAmt + deliveryFee) * 100) / 100;
+    Math.round((subtotal + serviceFeeAmt) * 100) / 100;
   const maxUsablePoints = Math.min(availablePoints, Math.floor(total));
   const appliedBonus = usePoints ? Math.min(bonusPoints, maxUsablePoints) : 0;
   const displayTotal = Math.max(
@@ -509,11 +486,6 @@ const Cart: React.FC = () => {
         }
       });
 
-      const currentType = orderTypes[activeIndex];
-      if (!currentType) {
-        setIsLoading(false);
-        return;
-      }
 
       const accBase: IReqCreateOrder = {
         phone: phoneNumber
@@ -531,16 +503,11 @@ const Cart: React.FC = () => {
         organizationSlug: venueData.slug,
       };
 
-      if (venueData?.table?.tableNum) {
-        accBase.serviceMode = 1;
-      } else {
-        if (currentType.value === 3) {
-          accBase.serviceMode = 3;
-          accBase.address = address;
-        } else {
-          accBase.serviceMode = currentType.value;
-        }
-      }
+    if (venueData?.table?.tableNum) {
+      accBase.serviceMode = 1;
+    } else {
+      accBase.serviceMode = 2;
+    }
 
       const hashLS = getHashLS();
       const payloadBase: IReqCreateOrder = {
@@ -600,11 +567,6 @@ const Cart: React.FC = () => {
         }
       });
 
-      const currentType = orderTypes[activeIndex];
-      if (!currentType) {
-        setIsLoading(false);
-        return;
-      }
 
       const accBase: IReqCreateOrder = {
         phone: phoneNumber
@@ -624,12 +586,7 @@ const Cart: React.FC = () => {
       if (venueData?.table?.tableNum) {
         accBase.serviceMode = 1;
       } else {
-        if (currentType.value === 3) {
-          accBase.serviceMode = 3;
-          accBase.address = address;
-        } else {
-          accBase.serviceMode = currentType.value;
-        }
+        accBase.serviceMode = 2;
       }
 
       const hashLS = getHashLS();
@@ -733,11 +690,7 @@ const Cart: React.FC = () => {
           }
         />
         <ClearCartModal isShow={clearCartModal} setActive={setClearCartModal} />
-        {/* No-points info modal */}
-        <NoPointsModal
-          showNoPoints={showNoPoints}
-          setShowNoPoints={setShowNoPoints}
-        />
+        
         {isLoading && <CartLoader />}
 
         <HeaderBar
@@ -795,18 +748,6 @@ const Cart: React.FC = () => {
           <div className='md:w-[50%]'>
             {cart.length > 0 ? (
               <>
-                <SpotsSelector
-                  spots={venueData.spots?.map((s) => ({
-                    id: s.id,
-                    name: s.name,
-                    address: s.address || '',
-                  }))}
-                  selectedSpot={selectedSpot}
-                  onSelect={setSelectedSpot}
-                  colorTheme={colorTheme}
-                  t={t}
-                  visible={activeIndex === 0}
-                />
 
                 <ContactsForm
                   t={t}
@@ -825,14 +766,6 @@ const Cart: React.FC = () => {
                   setComment={setComment}
                 />
 
-                {/* Delivery info banner */}
-                <DeliveryInfoBanner
-                  isDelivery={isDeliveryType}
-                  deliveryFreeFrom={deliveryFreeFrom}
-                  subtotal={subtotal}
-                  colorTheme={colorTheme}
-                  t={t}
-                />
 
                 <SumDetails
                   t={t}
@@ -931,40 +864,7 @@ const Cart: React.FC = () => {
             onPay={handleOrder}
           />
         )}
-        <PointsModal
-          isShow={isPointsModalOpen}
-          max={maxUsablePoints}
-          initial={maxUsablePoints}
-          skipOtp={!!getHashLS()}
-          onCancel={() => {
-            setIsPointsModalOpen(false);
-            setUsePoints(false);
-            setBonusPoints(0);
-            setOtpCode('');
-          }}
-          onConfirm={(v) => {
-            if (!v || v <= 0) {
-              setUsePoints(false);
-              setBonusPoints(0);
-              setIsPointsModalOpen(false);
-              return;
-            }
-            setBonusPoints(v);
-            setUsePoints(true);
-            if (!getHashLS()) {
-              requestOtpForPoints(v);
-            } else {
-              setIsPointsModalOpen(false);
-            }
-          }}
-          onConfirmOtp={(code) => {
-            if (code) {
-              setOtpCode(code);
-              requestPhoneVerificationHash(code, bonusPoints);
-            }
-            setIsPointsModalOpen(false);
-          }}
-        />
+        
         {serverError && (
           <div
             style={{

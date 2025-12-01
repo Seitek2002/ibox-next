@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
 
 /**
  * Venue-scoped layout that sets metadata based on venue API response.
@@ -6,9 +6,9 @@ import type { Metadata } from "next";
  * - Uses organization logo for icons/OpenGraph/Twitter
  * - Applies to all nested routes under /[venue]
  */
-export async function generateMetadata(
-  props: { params: Promise<{ venue: string }> }
-): Promise<Metadata> {
+export async function generateMetadata(props: {
+  params: Promise<{ venue: string }>;
+}): Promise<Metadata> {
   const { venue: slug } = await props.params;
   let data:
     | {
@@ -22,7 +22,10 @@ export async function generateMetadata(
 
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://stark.adamtech.dev/api/'}organizations/${encodeURIComponent(slug)}/`,
+      `${
+        process.env.NEXT_PUBLIC_API_BASE_URL ||
+        'https://stark.adamtech.dev/api/'
+      }organizations/${encodeURIComponent(slug)}/`,
       {
         // Cache softly to avoid hammering the API but keep it reasonably fresh
         next: { revalidate: 300 },
@@ -39,7 +42,7 @@ export async function generateMetadata(
   const description = data?.description?.trim();
   const logo = data?.logo?.trim();
 
-  const title = companyName ? `${companyName} — ishop` : "ishop";
+  const title = companyName ? `${companyName} — ibox` : 'ibox';
 
   return {
     title,
@@ -50,7 +53,7 @@ export async function generateMetadata(
       images: logo ? [{ url: logo }] : undefined,
     },
     twitter: {
-      card: "summary",
+      card: 'summary',
       title,
       description: description || undefined,
       images: logo ? [logo] : undefined,

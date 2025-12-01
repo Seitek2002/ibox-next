@@ -9,8 +9,8 @@ import { vibrateClick } from 'utils/haptics';
 import { loadVenueFromStorage } from 'utils/storageUtils';
 import Header from 'src/components/Header/SupHeader';
 
-
 import { clearCart, setVenue } from 'src/store/yourFeatureSlice';
+import type { IVenues } from 'types/venues.types';
 
 const SelectOrderType = () => {
   const { t } = useTranslation();
@@ -31,8 +31,13 @@ const SelectOrderType = () => {
 
     if (data) {
       dispatch(setVenue(data));
-      // Теперь только доставка: всегда переходим на /deliver/:venue
-      navigate(`/deliver/${data.slug}`);
+      // Переходим на /:venue/:spotId (используем филиал/спот)
+      const defaultSpot = (data?.defaultDeliverySpot ?? data?.spots?.[0]?.id ?? null) as number | null;
+      if (defaultSpot) {
+        navigate(`/${data.slug}/${defaultSpot}`);
+      } else {
+        navigate(`/${data.slug}`);
+      }
     }
   }, [data, dispatch, navigate, venue]);
 
@@ -54,6 +59,7 @@ const SelectOrderType = () => {
               </div>
               <div>
                 <div className='text-[20px] font-bold'>{data?.companyName}</div>
+                <span className='text-sm'>{data?.spots?.[0]?.address}</span>
               </div>
             </div>
           </div>

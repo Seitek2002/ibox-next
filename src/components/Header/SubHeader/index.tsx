@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { useAppSelector } from 'hooks/useAppSelector';
 
 import { useGetVenueQuery } from 'api/Venue.api';
 import { loadVenueFromStorage } from 'utils/storageUtils';
@@ -8,11 +9,11 @@ import { loadVenueFromStorage } from 'utils/storageUtils';
 import { clearCart, setVenue } from 'src/store/yourFeatureSlice';
 
 const SubHeader = () => {
-  const { venue, id } = useParams();
+  const { venue, venueId } = useParams();
   const dispatch = useDispatch();
+  const activeSpotId = useAppSelector((s) => s.yourFeature.usersData?.activeSpot) as number | undefined;
   const { data } = useGetVenueQuery({
     venueSlug: venue || '',
-    tableId: Number(id) || undefined,
   });
 
   useEffect(() => {
@@ -37,6 +38,9 @@ const SubHeader = () => {
             <div className='name' title={data?.companyName}>
               {data?.companyName}
             </div>
+            <span className='text-sm'>
+              {data?.spots?.find((s) => s.id === activeSpotId)?.address ?? data?.spots?.[0]?.address}
+            </span>
           </div>
         </div>
         <div className='flex items-center justify-between md:gap-[12px] md:flex-initial'>

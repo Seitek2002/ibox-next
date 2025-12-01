@@ -1,4 +1,4 @@
-/** 
+/**
  * Client-only guard that limits WS attempts:
  * - Skips connecting to /ws/orders if phone_number param is missing or empty
  * - Allows at most ONE attempt per unique WS URL per page visit (no auto-retry)
@@ -12,8 +12,8 @@ import { useEffect } from 'react';
 
 declare global {
   interface Window {
-    __ISHOP_WS_GUARD_INSTALLED__?: boolean;
-    __ISHOP_WS_ATTEMPTED__?: Set<string>;
+    __ibox_WS_GUARD_INSTALLED__?: boolean;
+    __ibox_WS_ATTEMPTED__?: Set<string>;
   }
 }
 
@@ -39,7 +39,7 @@ function createDummyWebSocket(url: string): WebSocket {
     send: (_data: any) => void 0,
     addEventListener: (_type: string, _listener: any, _opts?: any) => void 0,
     removeEventListener: (_type: string, _listener: any, _opts?: any) => void 0,
-    dispatchEvent: (_e: any) => false
+    dispatchEvent: (_e: any) => false,
   };
 
   // Fire error/close asynchronously (microtask) to avoid interfering with caller flow
@@ -58,7 +58,10 @@ function createDummyWebSocket(url: string): WebSocket {
  */
 function isOrdersWs(urlStr: string): boolean {
   try {
-    const u = new URL(urlStr, typeof window !== 'undefined' ? window.location.href : 'http://localhost');
+    const u = new URL(
+      urlStr,
+      typeof window !== 'undefined' ? window.location.href : 'http://localhost'
+    );
     // Heuristic: endpoint contains /ws/orders
     return /\/ws\/orders/i.test(u.pathname);
   } catch {
@@ -72,7 +75,10 @@ function isOrdersWs(urlStr: string): boolean {
  */
 function extractPhone(urlStr: string): string | null {
   try {
-    const u = new URL(urlStr, typeof window !== 'undefined' ? window.location.href : 'http://localhost');
+    const u = new URL(
+      urlStr,
+      typeof window !== 'undefined' ? window.location.href : 'http://localhost'
+    );
     const pn = u.searchParams.get('phone_number');
     return pn !== null ? pn.trim() : null;
   } catch {
@@ -87,14 +93,19 @@ export default function WsGuard() {
     if (typeof window === 'undefined') return;
 
     // Install only once per page
-    if (window.__ISHOP_WS_GUARD_INSTALLED__) return;
-    window.__ISHOP_WS_GUARD_INSTALLED__ = true;
+    if (window.__ibox_WS_GUARD_INSTALLED__) return;
+    window.__ibox_WS_GUARD_INSTALLED__ = true;
 
-    const attempted = (window.__ISHOP_WS_ATTEMPTED__ = window.__ISHOP_WS_ATTEMPTED__ ?? new Set<string>());
+    const attempted = (window.__ibox_WS_ATTEMPTED__ =
+      window.__ibox_WS_ATTEMPTED__ ?? new Set<string>());
     const OriginalWS = window.WebSocket;
 
     // Patch global WebSocket
-    const PatchedWS: any = function (this: any, url: string | URL, protocols?: string | string[]) {
+    const PatchedWS: any = function (
+      this: any,
+      url: string | URL,
+      protocols?: string | string[]
+    ) {
       const urlStr = String(url);
       const isOrders = isOrdersWs(urlStr);
       const phone = extractPhone(urlStr);
@@ -116,7 +127,9 @@ export default function WsGuard() {
       }
       // Proceed with a real connection
       // eslint-disable-next-line new-cap
-      return protocols !== undefined ? new OriginalWS(urlStr as any, protocols as any) : new OriginalWS(urlStr as any);
+      return protocols !== undefined
+        ? new OriginalWS(urlStr as any, protocols as any)
+        : new OriginalWS(urlStr as any);
     };
 
     // Preserve static members
