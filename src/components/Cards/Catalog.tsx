@@ -30,6 +30,10 @@ const CatalogCard: FC<IProps> = ({ item, foodDetail, onMaxExceeded }) => {
     (state) => state.yourFeature.venue?.colorTheme
   );
 
+  // Normalize stock value: treat null/invalid as 0 (out of stock)
+  const stockOf = (q: unknown) =>
+    typeof q === 'number' && Number.isFinite(q) ? q : 0;
+
   const openFoodDetail = () => {
     vibrateClick();
     if (foodDetail) foodDetail(item as IProduct);
@@ -45,7 +49,8 @@ const CatalogCard: FC<IProps> = ({ item, foodDetail, onMaxExceeded }) => {
       const currentTotal = cart
         .filter((ci) => String(ci.id).split(',')[0] === baseId)
         .reduce((sum, ci) => sum + ci.quantity, 0);
-      if (item.quantity <= 0 || currentTotal >= item.quantity) {
+      const maxStock = stockOf(item.quantity);
+      if (maxStock <= 0 || currentTotal >= maxStock) {
         onMaxExceeded && onMaxExceeded();
         // Out of stock or reached limit
         return;
@@ -59,7 +64,7 @@ const CatalogCard: FC<IProps> = ({ item, foodDetail, onMaxExceeded }) => {
         id: item.id + '',
         modificators: undefined,
         quantity: 1,
-        availableQuantity: item.quantity,
+        availableQuantity: stockOf(item.quantity),
       };
       dispatch(addToCart(newItem));
     }
@@ -170,7 +175,7 @@ const CatalogCard: FC<IProps> = ({ item, foodDetail, onMaxExceeded }) => {
             от {+item.modificators[0].price} с
           </span>
         </div>
-      ) : item.quantity === 0 ? (
+      ) : stockOf(item.quantity) === 0 ? (
         <span className='text-center text-[red]'>Нет в наличии</span>
       ) : (
         <div className='cart-info'>

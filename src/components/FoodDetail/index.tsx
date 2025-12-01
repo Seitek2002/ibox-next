@@ -40,6 +40,10 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
   const [selectedSize, setSelectedSize] = useState<IModificator | null>(null);
   const dispatch = useAppDispatch();
 
+  // Normalize stock value: treat null/invalid as 0 (out of stock)
+  const stockOf = (q: unknown) =>
+    typeof q === 'number' && Number.isFinite(q) ? q : 0;
+
   // Guard: ensure we only pass actual non-empty strings to <img src>
   const safeSrc = (v: unknown) => (typeof v === 'string' && v.trim().length > 0 ? v : undefined);
 
@@ -58,9 +62,7 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
       const currentTotal = cart
         .filter((ci) => String(ci.id).split(',')[0] === baseId)
         .reduce((sum, ci) => sum + ci.quantity, 0);
-      const maxAvail = Number.isFinite(item.quantity)
-        ? item.quantity
-        : Infinity;
+      const maxAvail = stockOf(item.quantity);
       const remaining = Math.max(0, maxAvail - currentTotal);
       if (remaining <= 0) {
         return;
@@ -75,7 +77,7 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
         modificators: selectedSize ?? undefined,
         id: item.id + ',' + sizeId,
         quantity: qtyToAdd,
-        availableQuantity: item.quantity,
+        availableQuantity: stockOf(item.quantity),
       };
       dispatch(addToCart(newItem));
     }
@@ -110,7 +112,7 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
   const currentTotal = cart
     .filter((ci) => String(ci.id).split(',')[0] === baseId)
     .reduce((sum, ci) => sum + ci.quantity, 0);
-  const maxAvail = Number.isFinite(item.quantity) ? item.quantity : Infinity;
+  const maxAvail = stockOf(item.quantity);
   const remaining = Math.max(0, maxAvail - currentTotal);
   const isOutOfStock = remaining <= 0;
 
@@ -121,7 +123,7 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
     const currentTotal = cart
       .filter((ci) => String(ci.id).split(',')[0] === baseId)
       .reduce((sum, ci) => sum + ci.quantity, 0);
-    const maxAvail = Number.isFinite(item.quantity) ? item.quantity : Infinity;
+    const maxAvail = stockOf(item.quantity);
     if (maxAvail <= 0 || currentTotal >= maxAvail) {
       return;
     }
@@ -134,7 +136,7 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
       id: String(item.id),
       modificators: undefined,
       quantity: 1,
-      availableQuantity: item.quantity,
+      availableQuantity: stockOf(item.quantity),
     };
     dispatch(addToCart(newItem));
   }, [dispatch, item, cart]);
