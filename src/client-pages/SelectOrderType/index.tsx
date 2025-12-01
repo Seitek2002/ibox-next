@@ -66,7 +66,7 @@ const SelectOrderType = () => {
         </div>
       </div>
       {/* <Tabs spots={data?.spots || []} /> */}
-      <div className='select-order-type__content'>
+      <div className='select-order-type__content hidden'>
         <h2 className='text-[20px]'>{t('orders.orderType')}</h2>
         <div className='select-order-type__items'>
           {[
