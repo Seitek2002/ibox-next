@@ -28,7 +28,7 @@ interface IProps {
 
 const SupHeader: FC<IProps> = ({ searchText, setSearchText }) => {
   const { i18n } = useTranslation();
-  const { venue, id } = useParams();
+  const { venue, venueId } = useParams();
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [isPhoneModalOpen, setPhoneModalOpen] = useState(false);
 
@@ -43,7 +43,7 @@ const SupHeader: FC<IProps> = ({ searchText, setSearchText }) => {
   };
   const { data } = useGetVenueQuery({
     venueSlug: venue || '',
-    tableId: Number(id) || undefined,
+    spotId: Number(venueId),
   });
 
   const selectLanguage = (language: string) => {

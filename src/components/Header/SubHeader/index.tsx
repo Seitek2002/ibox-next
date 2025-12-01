@@ -14,6 +14,7 @@ const SubHeader = () => {
   const activeSpotId = useAppSelector((s) => s.yourFeature.usersData?.activeSpot) as number | undefined;
   const { data } = useGetVenueQuery({
     venueSlug: venue || '',
+    spotId: Number(venueId),
   });
 
   useEffect(() => {

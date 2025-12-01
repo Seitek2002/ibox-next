@@ -25,7 +25,7 @@ const Catalog: FC<IProps> = ({
   categoryTitle,
   isSearchOpenOnMobile = false,
 }) => {
-  const { venue } = useParams();
+  const { venue, venueId } = useParams();
   const [isShow, setIsShow] = useState(false);
   const [activeFood, setActiveFood] = useState<IProduct | null>(null);
 
@@ -62,6 +62,7 @@ const Catalog: FC<IProps> = ({
     {
       search: effectiveSearch || undefined,
       organizationSlug: venue,
+      spotId: Number(venueId),
     },
     { skip: !venue || isSearchOpenOnMobile }
   );

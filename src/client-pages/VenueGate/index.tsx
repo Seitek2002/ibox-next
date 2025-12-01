@@ -55,6 +55,7 @@ const VenueGate: FC = () => {
 
   const { data, isError, isLoading } = useGetVenueQuery({
     venueSlug: venue || '',
+    spotId: Number(venueId),
   });
 
   if (isLoading) {

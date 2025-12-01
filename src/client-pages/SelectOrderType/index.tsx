@@ -14,10 +14,10 @@ import type { IVenues } from 'types/venues.types';
 
 const SelectOrderType = () => {
   const { t } = useTranslation();
-  const { venue } = useParams();
+  const { venue, venueId } = useParams();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { data } = useGetVenueQuery({ venueSlug: venue || '' });
+  const { data } = useGetVenueQuery({ venueSlug: venue || '', spotId: Number(venueId) });
   const colorTheme = useAppSelector(
     (state) => state.yourFeature.venue.colorTheme
   );
