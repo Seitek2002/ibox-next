@@ -4,13 +4,13 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 /**
- * If user opens /:venue without spotId, redirect to /scan
+ * If user opens /:venue without spotId, redirect to /
  */
 export default function VenuePage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    navigate("/scan", { replace: true });
+    navigate("/", { replace: true });
   }, [navigate]);
 
   return null;
