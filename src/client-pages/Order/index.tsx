@@ -11,6 +11,7 @@ import { wsOrdersUrl } from 'utils/endpoints';
 import Item from './components/Item';
 
 import { statusMessages } from './enums';
+import Image from 'next/image';
 
 import headerArrowIcon from '@/assets/icons/Busket/header-arrow.svg';
 import priceArrow from '@/assets/icons/Busket/price-arrow.svg';
@@ -129,7 +130,7 @@ const Order = () => {
   return (
     <div className='order relative font-inter bg-[#F1F2F3] px-[16px] pt-[12px] lg:max-w-[1140px] lg:mx-auto'>
       <header className='order__header'>
-        <img src={headerArrowIcon} alt='' onClick={handleNavigate} />
+        <Image src={headerArrowIcon} alt='' onClick={handleNavigate} width={20} height={20} />
         <h3>{t('orders.title')}</h3>
         <div></div>
       </header>
@@ -223,10 +224,10 @@ const Order = () => {
               <>
                 <>
                   <div className='order__status-img'>
-                    <img src={currentStatus.icon} alt='' />
+                    <Image src={currentStatus.icon} alt='' width={64} height={64} unoptimized />
                   </div>
                   <h2>
-                    <img src={currentStatus.title.icon} alt='' />
+                    <Image src={currentStatus.title.icon} alt='' width={20} height={20} unoptimized />
                     {order?.statusText}
                   </h2>
                 </>
@@ -319,9 +320,11 @@ const Order = () => {
               className='cart__sum-top text-[#80868B]'
             >
               {t('empty.deteil')}
-              <img
+              <Image
                 src={priceArrow}
                 alt='arrow'
+                width={16}
+                height={16}
                 className={active ? 'cart__sum-img active' : 'cart__sum-img'}
               />
             </div>

@@ -1,12 +1,11 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import Image from 'next/image';
 
 import { useAppDispatch } from 'hooks/useAppDispatch';
 import { useAppSelector } from 'hooks/useAppSelector';
 import { vibrateClick } from 'utils/haptics';
-
 import close from '@/assets/icons/close.svg';
-
 import { clearCart } from 'src/store/yourFeatureSlice';
 
 interface IProps {
@@ -20,6 +19,7 @@ const ClearCartModal: FC<IProps> = ({ isShow, setActive }) => {
     (state) => state.yourFeature.venue?.colorTheme
   );
   const { t } = useTranslation();
+
   const handleClose = () => {
     vibrateClick();
     setActive(!isShow);
@@ -38,7 +38,7 @@ const ClearCartModal: FC<IProps> = ({ isShow, setActive }) => {
         onClick={handleClose}
       ></div>
       <div className={isShow ? 'clear-cart-modal active' : 'clear-cart-modal'}>
-        <img src={close} alt='close-icon' onClick={handleClose} />
+        <Image src={close} alt='close-icon' onClick={handleClose} width={20} height={20} />
         <h3 className='text-[20px] font-medium'>{t('basket.removeAllConfirm.title')}</h3>
         <div className='clear-cart-modal__btns'>
           <button className='bg-[#F9F9F9]' onClick={handleClose}>{t('cancellation')}</button>

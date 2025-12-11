@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import Image from 'next/image';
 
 import logoIcon from '@/assets/icons/header-logo.svg';
 
@@ -12,7 +13,7 @@ const Main = () => {
           <div className='flex justify-between items-center h-16'>
             <div className='flex items-center'>
               <div className='flex-shrink-0 flex gap-[10px]'>
-                <img className='h-8 w-8' src={logoIcon} alt='iMenu Logo' />
+                <Image className='h-8 w-8' src={logoIcon} alt='iMenu Logo' width={32} height={32} />
                 <h1 className='text-2xl font-bold text-[#854C9D]'>ibox.kg</h1>
               </div>
             </div>

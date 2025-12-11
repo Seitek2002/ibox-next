@@ -1,4 +1,5 @@
 import React, { RefObject } from 'react';
+import Image from 'next/image';
 
 import { vibrateClick } from 'utils/haptics';
 
@@ -7,7 +8,6 @@ import cookieIcon from '@/assets/icons/Busket/cookie.svg';
 import headerArrowIcon from '@/assets/icons/Busket/header-arrow.svg';
 import priceArrow from '@/assets/icons/Busket/price-arrow.svg';
 import deliveryIcon from '@/assets/icons/Order/delivery.svg';
-
 
 type TFunc = (k: string, opts?: Record<string, unknown>) => string;
 
@@ -18,7 +18,7 @@ export const HeaderBar: React.FC<{
 }> = ({ title, onBack, onClear }) => {
   return (
     <header className='cart__header'>
-      <img
+      <Image
         src={headerArrowIcon}
         alt=''
         onClick={() => {
@@ -28,7 +28,7 @@ export const HeaderBar: React.FC<{
         className='cursor-pointer'
       />
       <h3>{title}</h3>
-      <img
+      <Image
         src={clearCartIcon}
         alt=''
         onClick={() => {
@@ -246,7 +246,7 @@ export const DeliveryInfoBanner: React.FC<{
       style={{ border: `1px solid ${colorTheme}33` }}
     >
       <div className='cart__delivery-icon' style={{ borderColor: colorTheme }}>
-        <img src={deliveryIcon} alt='delivery' />
+        <Image src={deliveryIcon} alt='delivery' width={24} height={24} />
       </div>
       <div className='cart__delivery-text'>
         {subtotal >= deliveryFreeFrom ? (
@@ -306,9 +306,11 @@ export const SumDetails: React.FC<{
         className='cart__sum-top text-[#80868B]'
       >
         {t('empty.deteil')}
-        <img
+        <Image
           src={priceArrow}
           alt='arrow'
+          width={16}
+          height={16}
           className={active ? 'cart__sum-img' : 'cart__sum-img active'}
         />
       </div>
@@ -343,8 +345,10 @@ export const SumDetails: React.FC<{
         )}
       </div>
 
-
-      <div className='cart__sum-ress border-[#f3f3f3]' style={{ borderTop: '1px solid #f3f3f3' }}>
+      <div
+        className='cart__sum-ress border-[#f3f3f3]'
+        style={{ borderTop: '1px solid #f3f3f3' }}
+      >
         {t('empty.totalAmount')} <span>{displayTotal} c</span>
       </div>
     </div>
@@ -362,7 +366,7 @@ export const Recommended: React.FC<{
     <div className='cart__forgot'>
       <h4 className='cart__forgot-title'>
         {t('orders.forgotten')}
-        <img src={cookieIcon} alt='cookie' />
+        <Image src={cookieIcon} alt='cookie' width={20} height={20} />
       </h4>
       <div className='cart__forgot-wrapper'>{items.map(renderItem)}</div>
     </div>

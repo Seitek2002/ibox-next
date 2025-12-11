@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import Image from 'next/image';
 
 import { ISpot } from 'types/venues.types';
 import { useAppDispatch } from 'hooks/useAppDispatch';
@@ -39,9 +40,11 @@ const Takeaway = () => {
                 key={spot.id}
                 onClick={() => handleClick(spot)}
               >
-                <img
+                <Image
                   src={geoIcon}
                   alt='geoIcon'
+                  width={24}
+                  height={24}
                   style={{ backgroundColor: colorTheme }}
                 />
                 <div>

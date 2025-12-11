@@ -1,5 +1,6 @@
 import { FC, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import Image from 'next/image';
 
 import { useGetProductsQuery } from 'api/Products.api';
 import { IProduct } from 'types/products.types';
@@ -234,14 +235,16 @@ const Search: FC<IProps> = ({ onSearchChange, searchText, setSearchText }) => {
               <h3 className='text-center text-[24px] font-semibold mb-[24px]'>
                 Увы, ничего не найдено{'('}
               </h3>
-              <img
+              <Image
                 src={
-                  typeof nothing === 'string'
-                    ? nothing
-                    : (nothing as unknown as { src?: string })?.src ||
-                      '/assets/images/not-found-products.png'
+                  (typeof nothing === 'string'
+                    ? (nothing as string)
+                    : (nothing as unknown as { src?: string })?.src) ||
+                  '/assets/images/not-found-products.png'
                 }
                 alt=''
+                width={800}
+                height={400}
                 className='w-full'
               />
             </div>
@@ -261,14 +264,16 @@ const Search: FC<IProps> = ({ onSearchChange, searchText, setSearchText }) => {
               <h3 className='text-center text-[24px] font-semibold mb-[24px]'>
                 Увы, ничего не найдено{'('}
               </h3>
-              <img
+              <Image
                 src={
-                  typeof nothing === 'string'
-                    ? nothing
-                    : (nothing as unknown as { src?: string })?.src ||
-                      '/assets/images/not-found-products.png'
+                  (typeof nothing === 'string'
+                    ? (nothing as string)
+                    : (nothing as unknown as { src?: string })?.src) ||
+                  '/assets/images/not-found-products.png'
                 }
                 alt=''
+                width={800}
+                height={400}
                 className='w-full'
               />
             </div>

@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import Image from 'next/image';
 
 import { vibrateClick } from 'utils/haptics';
 import BusketDesktop from 'components/BusketDesktop';
@@ -42,13 +43,15 @@ const Adaptivement: FC<IProps> = ({
           <div className='busket'>
             <header className='busket__header'>
               <h2>{t('basket.title')}</h2>
-              <img
+              <Image
                 onClick={() => {
                   vibrateClick();
                   clearCartHandler();
                 }}
                 src={clearCartIcon}
                 alt=''
+                width={20}
+                height={20}
                 className='cursor-pointer'
               />
             </header>

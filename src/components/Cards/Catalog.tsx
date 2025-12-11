@@ -1,4 +1,5 @@
-import { FC, useMemo, useState } from 'react';
+import { FC, useMemo, useState, useEffect } from 'react';
+import Image from 'next/image';
 
 import { IProduct } from 'types/products.types';
 import { useAppDispatch } from 'hooks/useAppDispatch';
@@ -25,6 +26,7 @@ const CatalogCard: FC<IProps> = ({ item, foodDetail, onMaxExceeded }) => {
     [item.productPhotoSmall]
   );
   const [isLoaded, setIsLoaded] = useState(srcCandidate === productPlaceholder);
+  const [imgSrc, setImgSrc] = useState<string>(srcCandidate as string);
   const cart = useAppSelector((state) => state.yourFeature.cart);
   const colorTheme = useAppSelector(
     (state) => state.yourFeature.venue?.colorTheme
@@ -78,25 +80,33 @@ const CatalogCard: FC<IProps> = ({ item, foodDetail, onMaxExceeded }) => {
     }
   };
 
+  useEffect(() => {
+    setIsLoaded(false);
+    setImgSrc((safeSrc(item.productPhotoSmall) ?? productPlaceholder) as string);
+  }, [item.productPhotoSmall]);
+
   const foundCartItem = cart.find(
     (cartItem) => +cartItem.id.split(',')[0] == item.id
   );
 
   return (
     <div className='cart-block bg-white'>
-      <div className='cart-img'>
+      <div className='cart-img relative'>
         {!isLoaded && (
           <div className='cart-img-skeleton absolute top-0 left-0 w-full h-full bg-gray-300 animate-pulse'></div>
         )}
-        <img
-          src={srcCandidate}
+        <Image
+          src={imgSrc}
           alt={item.productName || 'product'}
+          fill
+          sizes="(max-width: 768px) 50vw, 260px"
+          unoptimized={/^https?:\/\//.test(String(imgSrc))}
           onLoad={() => setIsLoaded(true)}
-          onError={(e) => {
-            if (e.currentTarget.src !== productPlaceholder) {
-              e.currentTarget.src = productPlaceholder;
-              setIsLoaded(true);
+          onError={() => {
+            if (imgSrc !== productPlaceholder) {
+              setImgSrc(productPlaceholder as string);
             }
+            setIsLoaded(true);
           }}
           className={`transition-opacity duration-300 cursor-pointer ${
             isLoaded ? 'opacity-100' : 'opacity-0'

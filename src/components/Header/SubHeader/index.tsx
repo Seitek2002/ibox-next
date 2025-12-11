@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'hooks/useAppSelector';
+import Image from 'next/image';
 
 import { useGetVenueQuery } from 'api/Venue.api';
 import { loadVenueFromStorage } from 'utils/storageUtils';
@@ -33,7 +34,7 @@ const SubHeader = () => {
       <div className='sub-header__content'>
         <div className='venue'>
           <div className='logo'>
-            <img src={data?.logo || undefined} alt='' />
+            <Image src={data?.logo || ''} alt='' width={32} height={32} unoptimized />
           </div>
           <div>
             <div className='name' title={data?.companyName}>

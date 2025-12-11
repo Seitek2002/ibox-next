@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
+import Image from 'next/image';
 
 import { useGetVenueQuery } from 'api/Venue.api';
 import { useAppDispatch } from 'hooks/useAppDispatch';
@@ -52,7 +53,7 @@ const SelectOrderType = () => {
           <div className='sub-header__content'>
             <div className='venue'>
               <div className='logo'>
-                <img src={data?.logo} alt='' />
+                <Image src={data?.logo || ''} alt='' width={32} height={32} unoptimized />
               </div>
               <div>
                 <div className='text-[20px] font-bold'>{data?.companyName}</div>

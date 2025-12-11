@@ -1,11 +1,11 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import Image from 'next/image';
 
 import { vibrateClick } from 'utils/haptics';
 
 import notFoundImg from 'assets/images/not-found-products.png';
-
 
 const NotFound: FC = () => {
   const { t } = useTranslation();
@@ -19,7 +19,7 @@ const NotFound: FC = () => {
     <section className='not-found'>
       <div className='not-found__card'>
         <div className='not-found__image'>
-          <img src={notFoundSrc} alt='404' />
+          <Image src={notFoundSrc} alt='404' width={800} height={400} className='w-full h-auto' />
         </div>
         <h1 className='not-found__title'>404</h1>
         <p className='not-found__subtitle'>Страница не найдена</p>

@@ -1,4 +1,5 @@
 import { FC, useState } from 'react';
+import Image from 'next/image';
 
 import { useAppSelector } from 'hooks/useAppSelector';
 
@@ -19,13 +20,16 @@ const Item: FC<IProps> = ({ img, name, price, weight, quantity }) => {
 
   return (
     <div className='order__status-list-item'>
-      <div className='order__status-list-img-wrapper'>
+      <div className='order__status-list-img-wrapper relative'>
         {!isLoaded && (
           <div className='cart-img-skeleton absolute top-0 left-0 w-full h-full bg-gray-300 animate-pulse'></div>
         )}
-        <img
-          src={img}
+        <Image
+          src={img || ''}
           alt={name}
+          fill
+          sizes="(max-width: 768px) 25vw, 160px"
+          unoptimized={/^https?:\/\//.test(String(img))}
           onLoad={() => setIsLoaded(true)}
           className={`transition-opacity duration-300 cursor-pointer ${
             isLoaded ? 'opacity-100' : 'opacity-0'

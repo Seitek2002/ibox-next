@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import Image from 'next/image';
 
 import { useAppSelector } from 'hooks/useAppSelector';
 import { vibrateClick } from 'utils/haptics';
@@ -44,14 +45,13 @@ const Item: FC<IProps> = ({ item, active, selectCategory }) => {
           borderWidth: active === item.id ? '3px' : '1px',
         }}
       >
-        <img
-          src={safeSrc(item.categoryPhoto) ?? categoryPlaceholder}
+        <Image
+          src={(safeSrc(item.categoryPhoto) ?? categoryPlaceholder) as string}
           alt='icon'
-          onError={(e) => {
-            if (e.currentTarget.src !== categoryPlaceholder) {
-              e.currentTarget.src = categoryPlaceholder;
-            }
-          }}
+          width={40}
+          height={40}
+          unoptimized={/^https?:\/\//.test(String(item.categoryPhoto))}
+          onError={() => { /* Next/Image: handled by src state upstream if needed */ }}
         />
       </div>
       <span className='leading-tight text-black'>{title}</span>
