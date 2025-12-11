@@ -5,8 +5,8 @@ import { useAppDispatch } from 'hooks/useAppDispatch';
 import { useAppSelector } from 'hooks/useAppSelector';
 import { vibrateClick } from 'utils/haptics';
 
-const minus = '/assets/icons/Busket/minus.svg';
-const plus = '/assets/icons/Busket/plus.svg';
+import minus from '@/assets/icons/Busket/minus.svg';
+import plus from '@/assets/icons/Busket/plus.svg';
 
 import { addToCart, incrementFromCart } from 'src/store/yourFeatureSlice';
 

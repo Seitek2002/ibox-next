@@ -2,11 +2,11 @@ import React, { RefObject } from 'react';
 
 import { vibrateClick } from 'utils/haptics';
 
-const clearCartIcon = '/assets/icons/Busket/clear-cart.svg';
-const cookieIcon = '/assets/icons/Busket/cookie.svg';
-const headerArrowIcon = '/assets/icons/Busket/header-arrow.svg';
-const priceArrow = '/assets/icons/Busket/price-arrow.svg';
-const deliveryIcon = '/assets/icons/Order/delivery.svg';
+import clearCartIcon from '@/assets/icons/Busket/clear-cart.svg';
+import cookieIcon from '@/assets/icons/Busket/cookie.svg';
+import headerArrowIcon from '@/assets/icons/Busket/header-arrow.svg';
+import priceArrow from '@/assets/icons/Busket/price-arrow.svg';
+import deliveryIcon from '@/assets/icons/Order/delivery.svg';
 
 
 type TFunc = (k: string, opts?: Record<string, unknown>) => string;

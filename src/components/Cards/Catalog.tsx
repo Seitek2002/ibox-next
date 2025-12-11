@@ -5,7 +5,7 @@ import { useAppDispatch } from 'hooks/useAppDispatch';
 import { useAppSelector } from 'hooks/useAppSelector';
 import { vibrateClick } from 'utils/haptics';
 
-const placeholder = '/assets/images/product-placeholder.svg';
+import productPlaceholder from '@/assets/images/product-placeholder.svg';
 
 import { addToCart, incrementFromCart } from 'src/store/yourFeatureSlice';
 
@@ -21,10 +21,10 @@ const CatalogCard: FC<IProps> = ({ item, foodDetail, onMaxExceeded }) => {
   const safeSrc = (v: unknown) => (typeof v === 'string' && v.trim().length > 0 ? v : undefined);
 
   const srcCandidate = useMemo(
-    () => safeSrc(item.productPhotoSmall) ?? placeholder,
+    () => safeSrc(item.productPhotoSmall) ?? productPlaceholder,
     [item.productPhotoSmall]
   );
-  const [isLoaded, setIsLoaded] = useState(srcCandidate === placeholder);
+  const [isLoaded, setIsLoaded] = useState(srcCandidate === productPlaceholder);
   const cart = useAppSelector((state) => state.yourFeature.cart);
   const colorTheme = useAppSelector(
     (state) => state.yourFeature.venue?.colorTheme
@@ -93,8 +93,8 @@ const CatalogCard: FC<IProps> = ({ item, foodDetail, onMaxExceeded }) => {
           alt={item.productName || 'product'}
           onLoad={() => setIsLoaded(true)}
           onError={(e) => {
-            if (e.currentTarget.src !== placeholder) {
-              e.currentTarget.src = placeholder;
+            if (e.currentTarget.src !== productPlaceholder) {
+              e.currentTarget.src = productPlaceholder;
               setIsLoaded(true);
             }
           }}

@@ -12,8 +12,8 @@ import Item from './components/Item';
 
 import { statusMessages } from './enums';
 
-const headerArrowIcon = '/assets/icons/Busket/header-arrow.svg';
-const priceArrow = '/assets/icons/Busket/price-arrow.svg';
+import headerArrowIcon from '@/assets/icons/Busket/header-arrow.svg';
+import priceArrow from '@/assets/icons/Busket/price-arrow.svg';
 
 // function formatCreatedAt(dateString: string) {
 //   const date = new Date(dateString);

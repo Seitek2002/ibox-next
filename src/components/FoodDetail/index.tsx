@@ -13,14 +13,16 @@ import { useAppDispatch } from 'hooks/useAppDispatch';
 import { useAppSelector } from 'hooks/useAppSelector';
 import { vibrateClick } from 'utils/haptics';
 
-const close = '/assets/icons/close.svg';
-const minus = '/assets/icons/Busket/minus.svg';
-const plus = '/assets/icons/Busket/plus.svg';
-const whiteMinus = '/assets/icons/CatalogCard/white-minus.svg';
-const whitePlus = '/assets/icons/CatalogCard/white-plus.svg';
+import close from '@/assets/icons/close.svg';
+import minus from '@/assets/icons/Busket/minus.svg';
+import plus from '@/assets/icons/Busket/plus.svg';
+import whiteMinus from '@/assets/icons/CatalogCard/white-minus.svg';
+import whitePlus from '@/assets/icons/CatalogCard/white-plus.svg';
+import productPlaceholder from '@/assets/images/product-placeholder.svg';
 
 import { useGesture } from '@use-gesture/react';
 import { addToCart, incrementFromCart } from 'src/store/yourFeatureSlice';
+import Image from 'next/image';
 
 interface IProps {
   item: IProduct;
@@ -45,7 +47,8 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
     typeof q === 'number' && Number.isFinite(q) ? q : 0;
 
   // Guard: ensure we only pass actual non-empty strings to <img src>
-  const safeSrc = (v: unknown) => (typeof v === 'string' && v.trim().length > 0 ? v : undefined);
+  const safeSrc = (v: unknown) =>
+    typeof v === 'string' && v.trim().length > 0 ? v : undefined;
 
   const handleCounterChange = useCallback((delta: number) => {
     vibrateClick();
@@ -218,7 +221,7 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
         className={`${isShow ? 'active' : ''} food-detail`}
         style={{ backgroundColor: '#fff' }}
       >
-        <img
+        <Image
           src={close}
           alt='close'
           className='close'
@@ -229,21 +232,17 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
             {!isLoaded && (
               <div className='cart-img-skeleton absolute top-0 left-0 w-full h-full bg-gray-300 animate-pulse'></div>
             )}
-            <img
+            <Image
               src={
                 safeSrc(item?.productPhotoLarge) ??
                 safeSrc(item?.productPhoto) ??
-                '/assets/images/product-placeholder.svg'
+                productPlaceholder
               }
               alt='product'
               onLoad={() => setIsLoaded(true)}
               onError={(e) => {
-                if (
-                  e.currentTarget.src !==
-                  '/assets/images/product-placeholder.svg'
-                ) {
-                  e.currentTarget.src =
-                    '/assets/images/product-placeholder.svg';
+                if (e.currentTarget.src !== productPlaceholder) {
+                  e.currentTarget.src = productPlaceholder;
                   setIsLoaded(true);
                 }
               }}
@@ -294,14 +293,14 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
               ) : (
                 <footer className='counter'>
                   <div className='counter__left'>
-                    <img
+                    <Image
                       src={minus}
                       alt=''
                       onClick={() => handleCounterChange(-1)}
                       className='cursor-pointer'
                     />
                     <span>{counter}</span>
-                    <img
+                    <Image
                       src={plus}
                       alt=''
                       onClick={() => handleCounterChange(1)}
@@ -345,7 +344,7 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
                     className='cart-btn active'
                     style={{ backgroundColor: colorTheme }}
                   >
-                    <img
+                    <Image
                       onClick={handleDecrementNoMods}
                       src={whiteMinus}
                       alt='minus'
@@ -353,7 +352,11 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
                     <span className='cart-count text-[#fff]'>
                       {foundCartItem?.quantity}
                     </span>
-                    <img onClick={handleAddNoMods} src={whitePlus} alt='plus' />
+                    <Image
+                      onClick={handleAddNoMods}
+                      src={whitePlus}
+                      alt='plus'
+                    />
                   </div>
                 )}
               </div>

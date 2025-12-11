@@ -7,9 +7,10 @@ import { useAppDispatch } from 'hooks/useAppDispatch';
 import { setUsersData } from 'src/store/yourFeatureSlice';
 import PhoneModal from 'components/PhoneModal';
 
-const arrowIcon = '/assets/icons/Header/arrow.svg';
-const search = '/assets/icons/Header/search.svg';
-const logoIcon = '/assets/icons/header-logo.svg';
+import arrowIcon from '@/assets/icons/Header/arrow.svg';
+import search from '@/assets/icons/Header/search.svg';
+import logoIcon from '@/assets/icons/header-logo.svg';
+import Image from 'next/image';
 
 
 const LANGUAGES = ['RU', 'KG', 'ENG'];
@@ -57,13 +58,13 @@ const SupHeader: FC<IProps> = ({ searchText, setSearchText }) => {
     <div className='header'>
       <div className='header__content'>
         <div className='logo'>
-          <img src={logoIcon} width={30} alt='iMenu Logo' />
+          <Image src={logoIcon} width={30} alt='iMenu Logo' />
           <span>ibox.kg</span>
         </div>
 
         {setSearchText && (
           <label htmlFor='search' className='header__search bg-[#F9F9F9]'>
-            <img src={search} alt='' />
+            <Image src={search} alt='' />
             <input
               type='text'
               placeholder={t('search')}
@@ -81,7 +82,7 @@ const SupHeader: FC<IProps> = ({ searchText, setSearchText }) => {
             }`}
             onClick={toggleLanguageMenu}
           >
-            {activeLang} <img src={arrowIcon} alt='Toggle Language' />
+            {activeLang} <Image src={arrowIcon} alt='Toggle Language' />
           </button>
 
           <div

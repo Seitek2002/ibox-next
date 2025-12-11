@@ -7,7 +7,7 @@ import { vibrateClick } from 'utils/haptics';
 import { loadUsersDataFromStorage } from 'utils/storageUtils';
 import Header from 'src/components/Header';
 
-const geoIcon = '/assets/icons/Order/geo.svg';
+import geoIcon from '@/assets/icons/Order/geo.svg';
 
 import { setUsersData } from 'src/store/yourFeatureSlice';
 

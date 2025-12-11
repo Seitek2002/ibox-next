@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-const logoIcon = '/assets/icons/header-logo.svg';
+import logoIcon from '@/assets/icons/header-logo.svg';
 
 import { Clock, Mail, MapPin, Phone, Plus, Star } from 'lucide-react';
 

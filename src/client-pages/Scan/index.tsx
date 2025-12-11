@@ -24,6 +24,7 @@ import {
 import { useState, FormEvent } from 'react';
 import type { LucideIcon } from 'lucide-react';
 import Link from 'next/link';
+import headerLogo from '@/assets/icons/header-logo.svg';
 
 // Base brand color used across gradients and accents
 const BRAND = {
@@ -139,7 +140,7 @@ export default function Scan() {
           <div className='flex items-center justify-between h-16 sm:h-20'>
             <div className='flex items-center space-x-3'>
               <img
-                src='/assets/icons/header-logo.svg'
+                src={headerLogo}
                 alt='ibox'
                 className='h-8 sm:h-10'
               />

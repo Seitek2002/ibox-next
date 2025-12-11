@@ -6,7 +6,7 @@ import BusketDesktop from 'components/BusketDesktop';
 
 import Search from '../Search';
 
-const clearCartIcon = '/assets/icons/Busket/clear-cart.svg';
+import clearCartIcon from '@/assets/icons/Busket/clear-cart.svg';
 
 interface IProps {
   clearCartHandler: () => void;

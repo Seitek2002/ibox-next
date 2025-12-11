@@ -5,8 +5,7 @@ import { useAppDispatch } from 'hooks/useAppDispatch';
 import { useAppSelector } from 'hooks/useAppSelector';
 import { vibrateClick } from 'utils/haptics';
 
-const close = '/assets/icons/close.svg';
-
+import close from '@/assets/icons/close.svg';
 
 import { clearCart } from 'src/store/yourFeatureSlice';
 

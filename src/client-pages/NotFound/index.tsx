@@ -10,10 +10,10 @@ import notFoundImg from 'assets/images/not-found-products.png';
 const NotFound: FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const notFoundSrc =
+  const notFoundSrc: string =
     typeof notFoundImg === 'string'
       ? notFoundImg
-      : (notFoundImg as unknown as { src?: string })?.src || '/assets/images/not-found-products.png';
+      : (notFoundImg as unknown as { src: string }).src;
 
   return (
     <section className='not-found'>

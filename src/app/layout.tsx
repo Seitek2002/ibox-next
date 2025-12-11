@@ -5,6 +5,7 @@ import Providers from './providers';
 import WsGuard from '@/components/WsGuard';
 import { Inter } from 'next/font/google';
 import Script from 'next/script';
+import headerLogo from '@/assets/icons/header-logo.svg';
 
 const geistInter = Inter({
   variable: '--font-geist-inter',
@@ -15,9 +16,9 @@ export const metadata: Metadata = {
   title: 'ibox',
   description: 'ibox — онлайн-меню и заказы',
   icons: {
-    icon: '/assets/icons/header-logo.svg',
-    shortcut: '/assets/icons/header-logo.svg',
-    apple: '/assets/icons/header-logo.svg',
+    icon: headerLogo,
+    shortcut: headerLogo,
+    apple: headerLogo,
   },
 };
 

@@ -3,7 +3,7 @@ import { FC } from 'react';
 import { useAppSelector } from 'hooks/useAppSelector';
 import { vibrateClick } from 'utils/haptics';
 
-const categoryPlaceholder = '/assets/images/category-placeholder.svg';
+import categoryPlaceholder from '@/assets/images/category-placeholder.svg';
 const safeSrc = (v: unknown) =>
   typeof v === 'string' && v.trim().length > 0 ? v : undefined;
 

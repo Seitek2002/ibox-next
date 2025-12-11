@@ -1,8 +1,8 @@
-const cancel = '/assets/icons/Order/cancel.svg';
-const check = '/assets/icons/Order/check.svg';
-const clock = '/assets/icons/Order/clock.svg';
-const guy = '/assets/icons/Order/guy.svg';
-const pending = '/assets/icons/Order/pending.svg';
+import cancel from '@/assets/icons/Order/cancel.svg';
+import check from '@/assets/icons/Order/check.svg';
+import clock from '@/assets/icons/Order/clock.svg';
+import guy from '@/assets/icons/Order/guy.svg';
+import pending from '@/assets/icons/Order/pending.svg';
 
 interface StatusMessages {
   [key: number]: {

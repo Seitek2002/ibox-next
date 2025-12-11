@@ -11,6 +11,7 @@ import FoodDetail from 'components/FoodDetail';
 import nothing from 'assets/images/not-found-products.png';
 
 import { t } from 'i18next';
+import Image from 'next/image';
 
 interface IProps {
   searchText?: string;
@@ -127,7 +128,10 @@ const Catalog: FC<IProps> = ({
     });
   }, [items, selectedCategory]);
 
-  const nothingSrc = typeof nothing === 'string' ? nothing : (nothing as unknown as { src?: string })?.src || '/assets/images/not-found-products.png';
+  const nothingSrc: string =
+    typeof nothing === 'string'
+      ? nothing
+      : (nothing as unknown as { src: string }).src;
 
   useEffect(() => {
     return () => {
@@ -181,10 +185,11 @@ const Catalog: FC<IProps> = ({
             maxWidth: '80vw',
             fontSize: 14,
           }}
-          role="status"
-          aria-live="polite"
+          role='status'
+          aria-live='polite'
         >
-          {stockToastMsg || 'Нельзя добавить больше — такого количества товара нет'}
+          {stockToastMsg ||
+            'Нельзя добавить больше — такого количества товара нет'}
         </div>
       )}
       {loading ? (
@@ -231,7 +236,7 @@ const Catalog: FC<IProps> = ({
           <h3 className='text-center text-[24px] font-semibold mb-[24px]'>
             Увы, ничего не найдено{'('}
           </h3>
-          <img src={nothingSrc} alt='' className='w-1/2' />
+          <Image src={nothingSrc} alt='' className='w-1/2' />
         </div>
       )}
     </section>

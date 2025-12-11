@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Category placeholder (round)">
+  <defs>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F5F7FA"/>
+      <stop offset="100%" stop-color="#E4E7EB"/>
+    </linearGradient>
+    <linearGradient id="disc" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F3F4F6"/>
+    </linearGradient>
+    <linearGradient id="cat-accent" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#9AA5B1"/>
+      <stop offset="100%" stop-color="#7B8794"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#000000" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- Outer round badge with subtle ring -->
+  <g filter="url(#softShadow)">
+    <circle cx="256" cy="256" r="238" fill="url(#ring)"/>
+    <circle cx="256" cy="256" r="208" fill="url(#disc)" stroke="#E5E7EB" stroke-width="2"/>
+  </g>
+
+  <!-- Stylized 3x3 grid icon centered -->
+  <g transform="translate(0,0)">
+    <!-- backdrop soft circle -->
+    <circle cx="256" cy="256" r="96" fill="#EDF2F7" stroke="#D9DEE6"/>
+    <!-- grid -->
+    <g transform="translate(256,256)">
+      <!-- row 1 -->
+      <rect x="-72" y="-72" width="40" height="40" rx="8" fill="url(#cat-accent)"/>
+      <rect x="-20" y="-72" width="40" height="40" rx="8" fill="url(#cat-accent)"/>
+      <rect x="32"  y="-72" width="40" height="40" rx="8" fill="url(#cat-accent)"/>
+      <!-- row 2 -->
+      <rect x="-72" y="-20" width="40" height="40" rx="8" fill="url(#cat-accent)"/>
+      <rect x="-20" y="-20" width="40" height="40" rx="8" fill="#A7B1BD"/>
+      <rect x="32"  y="-20" width="40" height="40" rx="8" fill="url(#cat-accent)"/>
+      <!-- row 3 -->
+      <rect x="-72" y="32" width="40" height="40" rx="8" fill="url(#cat-accent)"/>
+      <rect x="-20" y="32" width="40" height="40" rx="8" fill="url(#cat-accent)"/>
+      <rect x="32"  y="32" width="40" height="40" rx="8" fill="url(#cat-accent)"/>
+    </g>
+  </g>
+</svg>
