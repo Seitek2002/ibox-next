@@ -106,6 +106,12 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
     setIsShow();
   };
 
+  const initialSrc =
+    safeSrc(item?.productPhotoLarge) ??
+    safeSrc(item?.productPhoto) ??
+    productPlaceholder;
+  const [mainSrc, setMainSrc] = useState<string>(initialSrc);
+
   const foundCartItem = cart.find(
     (cartItem) => +cartItem.id.split(',')[0] == item.id
   );
@@ -169,7 +175,12 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
 
   useEffect(() => {
     setIsLoaded(false);
-  }, [item?.productPhoto]);
+    setMainSrc(
+      (safeSrc(item?.productPhotoLarge) ??
+        safeSrc(item?.productPhoto) ??
+        productPlaceholder) as string
+    );
+  }, [item?.productPhoto, item?.productPhotoLarge]);
 
   const descriptionNodes = useMemo(() => {
     const desc = item?.productDescription ?? '';
@@ -226,6 +237,8 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
           alt='close'
           className='close'
           onClick={handleImageClick}
+          width={20}
+          height={20}
         />
         <div className='food-detail__wrapper'>
           <div {...bind()} className='img-wrapper'>
@@ -233,18 +246,17 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
               <div className='cart-img-skeleton absolute top-0 left-0 w-full h-full bg-gray-300 animate-pulse'></div>
             )}
             <Image
-              src={
-                safeSrc(item?.productPhotoLarge) ??
-                safeSrc(item?.productPhoto) ??
-                productPlaceholder
-              }
+              src={mainSrc}
               alt='product'
+              fill
+              sizes="(max-width: 768px) 100vw, 600px"
+              unoptimized={/^https?:\/\//.test(mainSrc)}
               onLoad={() => setIsLoaded(true)}
-              onError={(e) => {
-                if (e.currentTarget.src !== productPlaceholder) {
-                  e.currentTarget.src = productPlaceholder;
-                  setIsLoaded(true);
+              onError={() => {
+                if (mainSrc !== productPlaceholder) {
+                  setMainSrc(productPlaceholder as string);
                 }
+                setIsLoaded(true);
               }}
               loading='lazy'
               className={`transition-opacity duration-300 ${
@@ -298,6 +310,8 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
                       alt=''
                       onClick={() => handleCounterChange(-1)}
                       className='cursor-pointer'
+                      width={24}
+                      height={24}
                     />
                     <span>{counter}</span>
                     <Image
@@ -305,6 +319,8 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
                       alt=''
                       onClick={() => handleCounterChange(1)}
                       className='cursor-pointer'
+                      width={24}
+                      height={24}
                     />
                   </div>
                   <div
@@ -348,6 +364,8 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
                       onClick={handleDecrementNoMods}
                       src={whiteMinus}
                       alt='minus'
+                      width={24}
+                      height={24}
                     />
                     <span className='cart-count text-[#fff]'>
                       {foundCartItem?.quantity}
@@ -356,6 +374,8 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
                       onClick={handleAddNoMods}
                       src={whitePlus}
                       alt='plus'
+                      width={24}
+                      height={24}
                     />
                   </div>
                 )}
