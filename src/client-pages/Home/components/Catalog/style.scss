@@ -51,7 +51,7 @@
     touch-action: none;
 
     img {
-      @apply w-full;
+      @apply w-full object-cover;
     }
   }
 
