@@ -24,6 +24,7 @@ import productPlaceholder from '@/assets/images/product-placeholder.svg';
 
 import { addToCart, incrementFromCart } from 'src/store/yourFeatureSlice';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface IProps {
   item: IProduct;
@@ -144,6 +145,8 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
   const foundCartItem = cart.find(
     (cartItem) => +cartItem.id.split(',')[0] == item.id
   );
+
+  const hasItemsInCart = (cart?.length ?? 0) > 0;
 
   // Compute remaining availability across cart for this product (all modificators)
   const baseId = String(item.id);
@@ -410,6 +413,21 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
                     />
                   </div>
                 )}
+              </div>
+            )}
+
+            {hasItemsInCart && (
+              <div className='food-detail__actions'>
+                <Link
+                  href='/cart'
+                  className='cart-btn bg-[#F1F2F3] text-[#000]'
+                  onClick={() => {
+                    vibrateClick();
+                    setIsShow();
+                  }}
+                >
+                  {t('basket.title')}
+                </Link>
               </div>
             )}
           </div>

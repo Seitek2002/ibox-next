@@ -7,7 +7,7 @@ import Adaptivement from './components/Adaptivement';
 import Catalog from './components/Catalog';
 import Categories from './components/Categories';
 import ClearCartModal from 'components/ClearCartModal';
-import Hero from 'components/Hero';
+// import Hero from 'components/Hero';
 import Header from 'src/components/Header';
 
 const Home = () => {
@@ -71,7 +71,7 @@ const Home = () => {
       <Header searchText={searchText} setSearchText={setSearchText} />
       <div className='flex gap-[30px] items-start pb-[50px] w-full'>
         <div className='w-full md:w-[58%]'>
-          <Hero />
+          {/* <Hero /> */}
           <Categories
             onCategoryChange={handleCategoryChange}
             onSearchChange={onSearchChange}
