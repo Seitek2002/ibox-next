@@ -57,9 +57,8 @@ export const OrderTypeSwitcher: React.FC<{
             vibrateClick();
             onChange(idx);
           }}
-          className={`cart__order-type-wrapper bg-[#fff] border-[#e1e2e5] cursor-pointer justify-center ${
-            activeIndex === idx ? 'active' : ''
-          }`}
+          className={`cart__order-type-wrapper bg-[#fff] border-[#e1e2e5] cursor-pointer justify-center ${activeIndex === idx ? 'active' : ''
+            }`}
           style={{
             borderColor: activeIndex === idx ? colorTheme : '#e1e2e5',
           }}
@@ -112,11 +111,10 @@ export const SpotsSelector: React.FC<{
                 />
                 <div
                   style={{ backgroundColor: colorTheme }}
-                  className={`w-5 h-5 rounded-full border-2 transition-colors duration-200 ${
-                    isSelected
+                  className={`w-5 h-5 rounded-full border-2 transition-colors duration-200 ${isSelected
                       ? 'border-amber-600 bg-amber-600'
                       : 'border-amber-400 bg-white peer-hover:border-amber-500'
-                  }`}
+                    }`}
                 >
                   {isSelected && (
                     <div className='absolute inset-0 flex items-center justify-center'>
@@ -168,68 +166,68 @@ export const ContactsForm: React.FC<{
   comment,
   setComment,
 }) => {
-  return (
-    <div className='cart__contacts'>
-      <label htmlFor='phoneNumber'>
-        <span className='text-[16px]'>
-          {t('phoneNumber')}{' '}
-          <span className='required' style={{ color: colorTheme }}>
-            {t('necessarily')}
+    return (
+      <div className='cart__contacts'>
+        <label htmlFor='phoneNumber'>
+          <span className='text-[16px]'>
+            {t('phoneNumber')}{' '}
+            <span className='required' style={{ color: colorTheme }}>
+              {t('necessarily')}
+            </span>
           </span>
-        </span>
-        <input
-          type='text'
-          placeholder='+996'
-          id='phoneNumber'
-          ref={inputRef}
-          value={phoneNumber}
-          onChange={(e) => onPhoneChange(e.target.value)}
-          className='text-[16px]'
-        />
-        {phoneError && <div className='error-message'>{phoneError}</div>}
-      </label>
-
-      {isDelivery && (
-        <label htmlFor='address'>
-          <span className='text-[14px]'>{t('addres')}</span>
           <input
             type='text'
-            id='address'
-            placeholder={t('empty.location') || t('addres')}
-            value={address}
-            onChange={(e) => onAddressChange(e.target.value)}
+            placeholder='+996'
+            id='phoneNumber'
+            ref={inputRef}
+            value={phoneNumber}
+            onChange={(e) => onPhoneChange(e.target.value)}
+            className='text-[16px]'
           />
-          {addressError && <div className='error-message'>{addressError}</div>}
+          {phoneError && <div className='error-message'>{phoneError}</div>}
         </label>
-      )}
 
-      {!showCommentInput ? (
-        <button
-          type='button'
-          className='text-[14px] block underline mb-3'
-          style={{ color: colorTheme }}
-          onClick={() => {
-            vibrateClick();
-            setShowCommentInput(true);
-          }}
-        >
-          {t('addComment')}
-        </button>
-      ) : (
-        <label htmlFor='comment'>
-          <span className='text-[14px]'>{t('comment')}</span>
-          <input
-            id='comment'
-            type='text'
-            placeholder={t('empty.comment') || t('comment')}
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-          />
-        </label>
-      )}
-    </div>
-  );
-};
+        {isDelivery && (
+          <label htmlFor='address'>
+            <span className='text-[14px]'>{t('addres')}</span>
+            <input
+              type='text'
+              id='address'
+              placeholder={t('empty.location') || t('addres')}
+              value={address}
+              onChange={(e) => onAddressChange(e.target.value)}
+            />
+            {addressError && <div className='error-message'>{addressError}</div>}
+          </label>
+        )}
+
+        {!showCommentInput ? (
+          <button
+            type='button'
+            className='text-[14px] block underline mb-3'
+            style={{ color: colorTheme }}
+            onClick={() => {
+              vibrateClick();
+              setShowCommentInput(true);
+            }}
+          >
+            {t('addComment')}
+          </button>
+        ) : (
+          <label htmlFor='comment'>
+            <span className='text-[14px]'>{t('comment')}</span>
+            <input
+              id='comment'
+              type='text'
+              placeholder={t('empty.comment') || t('comment')}
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+            />
+          </label>
+        )}
+      </div>
+    );
+  };
 
 export const DeliveryInfoBanner: React.FC<{
   isDelivery: boolean;
@@ -283,6 +281,7 @@ export const SumDetails: React.FC<{
   hasFreeDeliveryHint: boolean;
   deliveryFreeFrom: number | null;
   displayTotal: number;
+  discountAmount?: number;
 }> = ({
   t,
   active,
@@ -295,65 +294,73 @@ export const SumDetails: React.FC<{
   hasFreeDeliveryHint,
   deliveryFreeFrom,
   displayTotal,
+  discountAmount = 0,
 }) => {
-  return (
-    <div className='cart__sum bg-[#fff]'>
-      <div
-        onClick={() => {
-          vibrateClick();
-          setActive(!active);
-        }}
-        className='cart__sum-top text-[#80868B]'
-      >
-        {t('empty.deteil')}
-        <Image
-          src={priceArrow}
-          alt='arrow'
-          width={16}
-          height={16}
-          className={active ? 'cart__sum-img' : 'cart__sum-img active'}
-        />
-      </div>
-      <div
-        ref={wrapperRef}
-        className={
-          active
-            ? 'cart__sum-wrapper divide-y active'
-            : 'cart__sum-wrapper divide-y'
-        }
-        style={{ height: `${wrapperHeight}px` }}
-      >
-        <div className='cart__sum-item text-[#80868B]'>
-          {t('empty.total')}
-          <div className='cart__sum-total all text-[#80868B]'>{subtotal} c</div>
+    return (
+      <div className='cart__sum bg-[#fff]'>
+        <div
+          onClick={() => {
+            vibrateClick();
+            setActive(!active);
+          }}
+          className='cart__sum-top text-[#80868B]'
+        >
+          {t('empty.deteil')}
+          <Image
+            src={priceArrow}
+            alt='arrow'
+            width={16}
+            height={16}
+            className={active ? 'cart__sum-img' : 'cart__sum-img active'}
+          />
+        </div>
+        <div
+          ref={wrapperRef}
+          className={
+            active
+              ? 'cart__sum-wrapper divide-y active'
+              : 'cart__sum-wrapper divide-y'
+          }
+          style={{ height: `${wrapperHeight}px` }}
+        >
+          <div className='cart__sum-item text-[#80868B]'>
+            {t('empty.total')}
+            <div className='cart__sum-total all text-[#80868B]'>{subtotal} c</div>
+          </div>
+
+          {isDelivery && (
+            <div className='cart__sum-item text-[#80868B]'>
+              {t('deliveryFee')}
+              <div className='cart__sum-total delivery'>{deliveryFee} c</div>
+            </div>
+          )}
+
+          {hasFreeDeliveryHint && deliveryFreeFrom !== null && (
+            <div className='cart__sum-item text-[#80868B]'>
+              <span className=''>{t('freeDeliveryFrom')}</span>
+              <div className='cart__sum-total text-[#00BFB2] font-semibold'>
+                {Number(deliveryFreeFrom)} c
+              </div>
+            </div>
+          )}
+
+          {discountAmount > 0 && (
+            <div className='cart__sum-item text-[#00BFB2] font-semibold'>
+              {t('basket.discount')}
+              <div className='cart__sum-total discount'>-{discountAmount} c</div>
+            </div>
+          )}
         </div>
 
-        {isDelivery && (
-          <div className='cart__sum-item text-[#80868B]'>
-            {t('deliveryFee')}
-            <div className='cart__sum-total delivery'>{deliveryFee} c</div>
-          </div>
-        )}
-
-        {hasFreeDeliveryHint && deliveryFreeFrom !== null && (
-          <div className='cart__sum-item text-[#80868B]'>
-            <span className=''>{t('freeDeliveryFrom')}</span>
-            <div className='cart__sum-total text-[#00BFB2] font-semibold'>
-              {Number(deliveryFreeFrom)} c
-            </div>
-          </div>
-        )}
+        <div
+          className='cart__sum-ress border-[#f3f3f3]'
+          style={{ borderTop: '1px solid #f3f3f3' }}
+        >
+          {t('empty.totalAmount')} <span>{displayTotal} c</span>
+        </div>
       </div>
-
-      <div
-        className='cart__sum-ress border-[#f3f3f3]'
-        style={{ borderTop: '1px solid #f3f3f3' }}
-      >
-        {t('empty.totalAmount')} <span>{displayTotal} c</span>
-      </div>
-    </div>
-  );
-};
+    );
+  };
 
 export const Recommended: React.FC<{
   t: TFunc;

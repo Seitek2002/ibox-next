@@ -32,9 +32,20 @@ const Cart: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [postOrder] = usePostOrdersMutation();
-  const userData = loadUsersDataFromStorage();
+  const [userData, setUserData] = useState<{
+    phoneNumber: string;
+    address: string;
+    type: number;
+    activeSpot: number;
+  }>(() => ({
+    phoneNumber: '',
+    address: '',
+    type: 1,
+    activeSpot: 0
+  }));
   const { t } = useTranslation();
   const [isShow, setIsShow] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const cart = useAppSelector((state) => state.yourFeature.cart);
   const [isLoading, setIsLoading] = useState(false);
   const colorTheme = useAppSelector(
@@ -64,25 +75,44 @@ const Cart: React.FC = () => {
     }
   }, [usersActiveSpot, selectedSpot]);
 
-  const [phoneNumber, setPhoneNumber] = useState(
-    `+996${userData.phoneNumber.replace('996', '')}`
-  );
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [comment, setComment] = useState('');
-  const [address, setAddress] = useState(userData.address || '');
+  const [address, setAddress] = useState('');
   const [promoCode, setPromoCode] = useState('');
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [showPromoInput, setShowPromoInput] = useState(false);
-  const storedPromo = typeof window !== 'undefined' ? (localStorage.getItem('promoCode') || '') : '';
+
   useEffect(() => {
+    setIsClient(true);
+    const storedData = loadUsersDataFromStorage();
+    setUserData({
+      phoneNumber: storedData.phoneNumber || '',
+      address: storedData.address || '',
+      type: storedData.type || 1,
+      activeSpot: storedData.activeSpot || 0
+    });
+
+    if (storedData.phoneNumber) {
+      setPhoneNumber(`+996${storedData.phoneNumber.replace('996', '')}`);
+    }
+    if (storedData.address) {
+      setAddress(storedData.address);
+    }
+
+    const storedPromo = localStorage.getItem('promoCode') || '';
     if (storedPromo) {
       setPromoCode(storedPromo);
       setShowPromoInput(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [phoneError, setPhoneError] = useState('');
   const [addressError, setAddressError] = useState('');
+
+  const [discountAmount, setDiscountAmount] = useState(0);
+  const [isPromoLoading, setIsPromoLoading] = useState(false);
+  const [promoError, setPromoError] = useState<string | null>(null);
+  const [promoSuccess, setPromoSuccess] = useState<string | null>(null);
 
   const [activeFood, setActiveFood] = useState<IProduct | null>(null);
   const [active, setActive] = useState(false);
@@ -102,7 +132,7 @@ const Cart: React.FC = () => {
       if (stockToastTimerRef.current) {
         clearTimeout(stockToastTimerRef.current);
       }
-    } catch {}
+    } catch { }
     stockToastTimerRef.current = window.setTimeout(
       () => setShowStockToast(false),
       1800
@@ -187,17 +217,17 @@ const Cart: React.FC = () => {
     replacement: { _: /\d/ },
   });
 
-  const isSelfPickupRoute = useMemo(() => {
+  const [isSelfPickupRoute, setIsSelfPickupRoute] = useState(false);
+
+  useEffect(() => {
     try {
       const mp = (localStorage.getItem('mainPage') || '');
       const parts = mp.split('/').filter(Boolean);
       if (parts.length) {
-        // Самовывоз: наличие отдельного сегмента "s" (например, /:venue/:spotId/s/)
-        return parts[parts.length - 1] === 's' || parts.includes('s');
+        setIsSelfPickupRoute(parts[parts.length - 1] === 's' || parts.includes('s'));
       }
-      return false;
     } catch {
-      return false;
+      setIsSelfPickupRoute(false);
     }
   }, []);
 
@@ -273,7 +303,7 @@ const Cart: React.FC = () => {
         if (typeof anyPu.url === 'string') return anyPu.url;
         if (typeof anyPu.href === 'string') return anyPu.href;
       }
-    } catch {}
+    } catch { }
     return null;
   };
 
@@ -377,7 +407,7 @@ const Cart: React.FC = () => {
           const onPageHide = () => {
             try {
               dispatch(clearCart());
-            } catch {}
+            } catch { }
             window.removeEventListener('pagehide', onPageHide);
           };
           window.addEventListener('pagehide', onPageHide);
@@ -416,6 +446,44 @@ const Cart: React.FC = () => {
     }
   };
 
+  const handleCheckPromo = async () => {
+    if (!promoCode.trim()) return;
+
+    setIsPromoLoading(true);
+    setPromoError(null);
+    setPromoSuccess(null);
+    setDiscountAmount(0);
+
+    try {
+      const response = await fetch(
+        `https://ibox.kg/api/check-promo/?organizationSlug=${venueData.slug}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            code: promoCode,
+            orderAmount: total.toString(),
+          }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (result.valid) {
+        setDiscountAmount(parseFloat(result.discount) || 0);
+        setPromoSuccess('Промокод применен!');
+      } else {
+        setPromoError(result.error || 'Неверный промокод');
+      }
+    } catch (err) {
+      setPromoError('Ошибка проверки промокода');
+    } finally {
+      setIsPromoLoading(false);
+    }
+  };
+
   function getCartItemPrice(item: IFoodCart): number {
     if (item.modificators?.price) {
       return item.modificators.price;
@@ -433,7 +501,7 @@ const Cart: React.FC = () => {
   const deliveryFee = 0;
   const hasFreeDeliveryHint = false;
   const total = Math.round((subtotal + serviceFeeAmt) * 100) / 100;
-  const displayTotal = total;
+  const displayTotal = Math.max(0, Math.round((total - discountAmount) * 100) / 100);
 
   // Smooth auto-height for details dropdown (no hardcoded px)
   useEffect(() => {
@@ -521,7 +589,7 @@ const Cart: React.FC = () => {
           </div>
         )}
 
-        {typeof window !== 'undefined' && window.innerWidth < 768 && (
+        {isClient && window.innerWidth < 768 && (
           <>
             {venueData?.table?.tableNum && (
               <div className='cart__top'>
@@ -545,96 +613,123 @@ const Cart: React.FC = () => {
           </>
         )}
 
-        <div className='md:flex gap-[24px]'>
-          <div className='md:w-[50%]'>
-            {cart.length > 0 ? (
-              <>
-                <ContactsForm
-                  t={t}
-                  colorTheme={colorTheme}
-                  inputRef={inputRef}
-                  phoneNumber={phoneNumber}
-                  onPhoneChange={handlePhoneChange}
-                  phoneError={phoneError}
-                  isDelivery={isDeliveryType}
-                  address={address}
-                  onAddressChange={handleAddressChange}
-                  addressError={addressError}
-                  showCommentInput={showCommentInput}
-                  setShowCommentInput={setShowCommentInput}
-                  comment={comment}
-                  setComment={setComment}
-                />
+        {isClient && cart.length > 0 ? (
+          <div className='md:flex gap-[24px]'>
+            <div className='md:w-[50%]'>
+              <ContactsForm
+                t={t}
+                colorTheme={colorTheme}
+                inputRef={inputRef}
+                phoneNumber={phoneNumber}
+                onPhoneChange={handlePhoneChange}
+                phoneError={phoneError}
+                isDelivery={isDeliveryType}
+                address={address}
+                onAddressChange={handleAddressChange}
+                addressError={addressError}
+                showCommentInput={showCommentInput}
+                setShowCommentInput={setShowCommentInput}
+                comment={comment}
+                setComment={setComment}
+              />
 
-                <SumDetails
-                  t={t}
-                  active={active}
-                  setActive={setActive}
-                  wrapperRef={wrapperRef}
-                  wrapperHeight={wrapperHeight}
-                  subtotal={subtotal}
-                  isDelivery={isDeliveryType}
-                  deliveryFee={deliveryFee}
-                  hasFreeDeliveryHint={hasFreeDeliveryHint}
-                  deliveryFreeFrom={deliveryFreeFrom}
-                  displayTotal={displayTotal}
-                />
+              <SumDetails
+                t={t}
+                active={active}
+                setActive={setActive}
+                wrapperRef={wrapperRef}
+                wrapperHeight={wrapperHeight}
+                subtotal={subtotal}
+                isDelivery={isDeliveryType}
+                deliveryFee={deliveryFee}
+                hasFreeDeliveryHint={hasFreeDeliveryHint}
+                deliveryFreeFrom={deliveryFreeFrom}
+                displayTotal={displayTotal}
+                discountAmount={discountAmount}
+              />
 
-                {!showPromoInput ? (
-                  <button
-                    type='button'
-                    className='text-[14px] block underline mb-3'
-                    style={{ color: colorTheme }}
-                    onClick={() => {
-                      vibrateClick();
-                      setShowPromoInput(true);
-                    }}
-                  >
-                    {t('addPromoCode')}
-                  </button>
-                ) : (
-                  <div className='cart__promo bg-[#fff] p-[12px] rounded-[12px] mt-[12px]'>
-                    <label htmlFor='promoCode' className='block'>
-                      <span className='text-[14px] flex items-center justify-between mb-[8px]'>
-                        {t('promoCode')}
-                        <span className='text-[12px] text-[#ccc]'>
-                          Необязательно
-                        </span>
+              {!showPromoInput ? (
+                <button
+                  type='button'
+                  className='text-[14px] block underline mb-3'
+                  style={{ color: colorTheme }}
+                  onClick={() => {
+                    vibrateClick();
+                    setShowPromoInput(true);
+                  }}
+                >
+                  {t('addPromoCode')}
+                </button>
+              ) : (
+                <div className='cart__promo bg-[#fff] p-[12px] rounded-[12px] mt-[12px]'>
+                  <label htmlFor='promoCode' className='block relative'>
+                    <span className='text-[14px] flex items-center justify-between mb-[8px]'>
+                      {t('promoCode')}
+                      <span className='text-[12px] text-[#ccc]'>
+                        Необязательно
                       </span>
-                      <input
-                        id='promoCode'
-                        type='text'
-                        placeholder={t('promoCode')}
-                        value={promoCode}
-                        onChange={(e) => {
-                          const v = e.target.value;
-                          setPromoCode(v);
-                          try {
-                            localStorage.setItem('promoCode', v);
-                          } catch {
-                            /* ignore */
-                          }
-                        }}
-                      />
-                    </label>
-                  </div>
-                )}
-              </>
-            ) : (
-              <Empty />
+                    </span>
+                    <input
+                      id='promoCode'
+                      type='text'
+                      placeholder={t('promoCode')}
+                      value={promoCode}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        setPromoCode(v);
+                        setPromoError(null);
+                        setPromoSuccess(null);
+                        try {
+                          localStorage.setItem('promoCode', v);
+                        } catch {
+                          /* ignore */
+                        }
+                      }}
+                    />
+                    <button
+                      type='button'
+                      className='absolute right-[12px] top-[34px] px-[16px] py-[8px] rounded-[10px] text-[#fff] text-[13px] font-bold transition-all active:scale-95 shadow-lg active:shadow-md'
+                      style={{
+                        backgroundColor: colorTheme,
+                        opacity: isPromoLoading || !promoCode.trim() ? 0.6 : 1,
+                      }}
+                      disabled={isPromoLoading || !promoCode.trim()}
+                      onClick={handleCheckPromo}
+                    >
+                      {isPromoLoading ? (
+                        <div className='w-[16px] h-[16px] border-2 border-white border-t-transparent rounded-full animate-spin' />
+                      ) : (
+                        t('apply')
+                      )}
+                    </button>
+                    {promoError && (
+                      <span className='text-[12px] text-red-500 mt-[4px] block'>
+                        {promoError}
+                      </span>
+                    )}
+                    {promoSuccess && (
+                      <span className='text-[12px] text-green-500 mt-[4px] block'>
+                        {promoSuccess}
+                      </span>
+                    )}
+                  </label>
+                </div>
+              )}
+            </div>
+
+            {window.innerWidth >= 768 && (
+              <div className='busket flex-1'>
+                <BusketDesktop
+                  to='/order'
+                  createOrder={handleOrder}
+                  disabled={!cart.length}
+                />
+              </div>
             )}
           </div>
-
-          {typeof window !== 'undefined' && window.innerWidth >= 768 && (
-            <div className='busket flex-1'>
-              <BusketDesktop
-                to='/order'
-                createOrder={handleOrder}
-                disabled={!cart.length}
-              />
-            </div>
-          )}
-        </div>
+        ) : isClient ? (
+          <Empty />
+        ) : null}
 
         <Recommended
           t={t}
@@ -648,7 +743,7 @@ const Cart: React.FC = () => {
           )}
         />
 
-        {typeof window !== 'undefined' && window.innerWidth < 768 && (
+        {isClient && window.innerWidth < 768 && (
           <FooterBar
             disabled={!cart.length}
             colorTheme={colorTheme}

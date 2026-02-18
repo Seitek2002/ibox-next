@@ -45,8 +45,10 @@
     "removeAllConfirm": {
       "title": "Clear cart?",
       "text": "Are you sure you want to clear the cart?"
-    }
+    },
+    "discount": "Discount"
   },
+  "apply": "Apply",
   "services": "Service",
   "deliveryFee": "Delivery",
   "freeDeliveryFrom": "Free delivery from",
