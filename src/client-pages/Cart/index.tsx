@@ -46,6 +46,7 @@ const Cart: React.FC = () => {
   const { t } = useTranslation();
   const [isShow, setIsShow] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const cart = useAppSelector((state) => state.yourFeature.cart);
   const [isLoading, setIsLoading] = useState(false);
   const colorTheme = useAppSelector(
@@ -84,6 +85,7 @@ const Cart: React.FC = () => {
 
   useEffect(() => {
     setIsClient(true);
+    setIsMobile(window.innerWidth < 768);
     const storedData = loadUsersDataFromStorage();
     setUserData({
       phoneNumber: storedData.phoneNumber || '',
@@ -589,7 +591,7 @@ const Cart: React.FC = () => {
           </div>
         )}
 
-        {isClient && window.innerWidth < 768 && (
+        {isClient && isMobile && (
           <>
             {venueData?.table?.tableNum && (
               <div className='cart__top'>
@@ -717,7 +719,7 @@ const Cart: React.FC = () => {
               )}
             </div>
 
-            {window.innerWidth >= 768 && (
+            {isClient && !isMobile && (
               <div className='busket flex-1'>
                 <BusketDesktop
                   to='/order'
@@ -743,7 +745,7 @@ const Cart: React.FC = () => {
           )}
         />
 
-        {isClient && window.innerWidth < 768 && (
+        {isClient && isMobile && (
           <FooterBar
             disabled={!cart.length}
             colorTheme={colorTheme}
