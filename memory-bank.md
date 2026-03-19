@@ -3,7 +3,7 @@ Project: ibox-next (Next.js + RTK Query storefront)
 High-level summary
 
 - Purpose: Client-facing storefront with venue-specific routes, product listing, orders tracking, and client bonus lookup.
-- Runtime: Next.js 15 (App Router), React 19, TypeScript.
+- Runtime: Next.js 16 (App Router), React 19, TypeScript.
 - State and data:
   - Redux Toolkit + RTK Query for API access.
   - i18next for localization with Accept-Language header propagation.
@@ -20,7 +20,7 @@ Run and build
 
 Tech stack
 
-- Framework: next@15.5.5 (App Router, turbopack)
+- Framework: next@16 (App Router, turbopack)
 - UI: react@19, react-dom@19, lucide-react
 - State: @reduxjs/toolkit^2.9.0, react-redux^9.2.0
 - Data: RTK Query (createApi/fetchBaseQuery)
