@@ -1,0 +1,33 @@
+# Dependencies - install fresh in container via npm ci
+node_modules
+.pnp
+.pnp.js
+
+# Build output
+.next
+out
+dist
+build
+
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Env - uncomment if using build args for NEXT_PUBLIC_*
+# .env
+# .env.local
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Misc
+.DS_Store
+*.pem
