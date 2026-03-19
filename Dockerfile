@@ -1,122 +1,76 @@
-# syntax=docker/dockerfile:1.4
+# syntax=docker.io/docker/dockerfile:1
 
-# ========================
-# Dependencies stage
-# ========================
-FROM node:20-slim AS deps
+FROM node:20-alpine AS base
 
-# Устанавливаем зависимости
-RUN apt-get update && apt-get install -y \
-    python3 \
-    make \
-    g++ \
-    libvips-dev \
-    && rm -rf /var/lib/apt/lists/*
+# Step 1. Rebuild the source code only when needed
+FROM base AS builder
 
 WORKDIR /app
 
-# Копируем файлы зависимостей
-COPY package.json package-lock.json* yarn.lock* pnpm-lock.yaml* ./
-
-# Устанавливаем зависимости с правильной переустановкой sharp
+# Install dependencies based on the preferred package manager
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
+# Omit --production flag for TypeScript devDependencies
 RUN \
-  if [ -f yarn.lock ]; then \
-    yarn --frozen-lockfile; \
-  elif [ -f package-lock.json ]; then \
-    npm ci --include=optional && \
-    npm uninstall sharp && \
-    npm install --os=linux --cpu=x64 sharp; \
-  elif [ -f pnpm-lock.yaml ]; then \
-    corepack enable pnpm && pnpm i --frozen-lockfile; \
-  else \
-    echo "Lockfile not found." && exit 1; \
+  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
+  elif [ -f package-lock.json ]; then npm ci; \
+  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i; \
+  # Allow install without lockfile, so example works even without Node.js installed locally
+  else echo "Warning: Lockfile not found. It is recommended to commit lockfiles to version control." && yarn install; \
   fi
 
-# ========================
-# Build stage
-# ========================
-FROM node:20-slim AS builder
-
-# Устанавливаем зависимости для сборки
-RUN apt-get update && apt-get install -y \
-    libvips-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-WORKDIR /app
-
-# Копируем node_modules из deps
-COPY --from=deps /app/node_modules ./node_modules
-
-# Копируем исходный код
+# 2. Копируем ВЕСЬ проект
 COPY . .
 
-# Отключаем телеметрию Next.js
-ENV NEXT_TELEMETRY_DISABLED=1
+# Environment variables must be present at build time
+# https://github.com/vercel/next.js/discussions/14030
+ARG ENV_VARIABLE
+ENV ENV_VARIABLE=${ENV_VARIABLE}
+ARG NEXT_PUBLIC_ENV_VARIABLE
+ENV NEXT_PUBLIC_ENV_VARIABLE=${NEXT_PUBLIC_ENV_VARIABLE}
 
-# Сборка приложения
+# Next.js collects completely anonymous telemetry data about general usage. Learn more here: https://nextjs.org/telemetry
+# Uncomment the following line to disable telemetry at build time
+# ENV NEXT_TELEMETRY_DISABLED 1
+
+# Build Next.js based on the preferred package manager
 RUN \
   if [ -f yarn.lock ]; then yarn build; \
   elif [ -f package-lock.json ]; then npm run build; \
-  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm build; \
+  elif [ -f pnpm-lock.yaml ]; then pnpm build; \
   else npm run build; \
   fi
 
-# ========================
-# Production stage
-# ========================
-FROM node:20-slim AS runner
+# Note: It is not necessary to add an intermediate step that does a full copy of `node_modules` here
 
-# Устанавливаем runtime зависимости
-RUN apt-get update && apt-get install -y \
-    dumb-init \
-    curl \
-    ca-certificates \
-    tzdata \
-    libvips42 \
-    && rm -rf /var/lib/apt/lists/*
-
-# Создаем непривилегированного пользователя
-RUN groupadd --gid 1001 nodejs && \
-    useradd --uid 1001 --gid nodejs --shell /bin/bash --create-home nextjs
+# Step 2. Production image, copy all the files and run next
+FROM base AS runner
 
 WORKDIR /app
 
-# Устанавливаем правильные разрешения
-RUN mkdir -p /app/.next && \
-    chown -R nextjs:nodejs /app
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 
-# Копируем public директорию
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
-
-# Копируем standalone сборку
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-
-# Копируем статические файлы
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-# Переключаемся на непривилегированного пользователя
+# Don't run production as root
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
 USER nextjs
 
-# Открываем порт
-EXPOSE 3000
+COPY --from=builder /app/public ./public
 
-# Переменные окружения для production
-ENV PORT=3000 \
-    HOSTNAME="0.0.0.0" \
-    NODE_ENV=production \
-    NEXT_TELEMETRY_DISABLED=1
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Healthcheck
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:3000/ || exit 1
+# Environment variables must be redefined at run time
+ARG ENV_VARIABLE
+ENV ENV_VARIABLE=${ENV_VARIABLE}
+ARG NEXT_PUBLIC_ENV_VARIABLE
+ENV NEXT_PUBLIC_ENV_VARIABLE=${NEXT_PUBLIC_ENV_VARIABLE}
 
-# Метаданные
-LABEL maintainer="your-email@example.com" \
-      description="Next.js Production Application" \
-      version="1.0"
+# Uncomment the following line to disable telemetry at run time
+# ENV NEXT_TELEMETRY_DISABLED 1
 
-# Используем dumb-init для правильной обработки сигналов
-ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+# Note: Don't expose ports here, Compose will handle that for us
 
-# Запускаем сервер
 CMD ["node", "server.js"]
