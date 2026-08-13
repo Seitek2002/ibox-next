@@ -27,8 +27,9 @@ export const ordersApi = baseApi.injectEndpoints({
         const org = organizationSlug ?? venueSlug;
         const spot = (spotId ?? spotSlug) as string | number | undefined;
 
-        if (org) params.append('organizationSlug', String(org));
-        if (spot !== undefined && spot !== null) params.append('spotId', String(spot));
+        // Бэкенд ждёт snake_case и требует organization_slug + phone.
+        if (org) params.append('organization_slug', String(org));
+        if (spot !== undefined && spot !== null) params.append('spot_id', String(spot));
         if (phone) params.append('phone', phone);
 
         return `orders/?${params.toString()}`;
@@ -45,8 +46,20 @@ export const ordersApi = baseApi.injectEndpoints({
         },
       }),
     }),
-    getOrdersById: builder.query<IOrderById, { id: number }>({
-      query: ({ id }) => `orders/${id}/`,
+    getOrdersById: builder.query<
+      IOrderById,
+      { id: number; organizationSlug?: string; phone?: string }
+    >({
+      // Retrieve на бэкенде использует тот же get_queryset, что и список:
+      // без organization_slug и phone он отдаёт 400.
+      query: ({ id, organizationSlug, phone }) => {
+        const params = new URLSearchParams();
+        if (organizationSlug) params.append('organization_slug', organizationSlug);
+        if (phone) params.append('phone', phone);
+        const qs = params.toString();
+
+        return qs ? `orders/${id}/?${qs}` : `orders/${id}/`;
+      },
     }),
   }),
   overrideExisting: false,

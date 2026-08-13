@@ -33,10 +33,22 @@ const Order = () => {
   const [active, setActive] = useState(false);
   const user = JSON.parse(localStorage.getItem('users') ?? '{}');
   const params = useParams();
-  const { data, isError } = useGetOrdersByIdQuery({
-    id: Number(params.id),
-  });
   const venueData = useAppSelector((state) => state.yourFeature.venue);
+  // При прямом заходе на /orders/:id стор ещё пустой — берём заведение из localStorage.
+  const storedVenue = JSON.parse(localStorage.getItem('venue') ?? '{}');
+  const organizationSlug = venueData?.slug || storedVenue.slug || '';
+  const phone = user.phoneNumber ? String(user.phoneNumber) : '';
+  // Запрос без этих параметров бэкенд отклоняет (400), поэтому не отправляем его.
+  const canFetchOrder = Boolean(params.id && organizationSlug && phone);
+  const { data, isError } = useGetOrdersByIdQuery(
+    {
+      id: Number(params.id),
+      organizationSlug,
+      phone,
+    },
+    { skip: !canFetchOrder }
+  );
+  const orderNotFound = isError || !canFetchOrder;
   const colorTheme = useAppSelector(
     (state) => state.yourFeature.venue?.colorTheme
   );
@@ -74,9 +86,10 @@ const Order = () => {
   }, [order]);
 
   useEffect(() => {
-    const ws = new WebSocket(
-      wsOrdersUrl({ phone: String(user.phoneNumber || ''), site: 'imenu' })
-    );
+    // Без phone_number бэкенд сразу закрывает соединение — не открываем его вовсе.
+    if (!phone) return;
+
+    const ws = new WebSocket(wsOrdersUrl({ phone, site: 'imenu' }));
 
     ws.onopen = () => {
       console.log('WebSocket connected');
@@ -106,7 +119,7 @@ const Order = () => {
     return () => {
       ws.close();
     };
-  }, [params.id, user.phoneNumber]);
+  }, [params.id, phone]);
 
   const handleNavigate = () => {
     vibrateClick();
@@ -219,7 +232,7 @@ const Order = () => {
             </div>
           </div>
 
-          {!isError ? (
+          {!orderNotFound ? (
             currentStatus && (
               <>
                 <>
