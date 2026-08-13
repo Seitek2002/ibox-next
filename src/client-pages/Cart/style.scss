@@ -151,8 +151,9 @@
     button {
       @apply w-full py-[16px] rounded-[12px] text-white;
 
+      // Фон серый задаётся инлайном (DISABLED_BG), поэтому здесь без opacity.
       &:disabled {
-        @apply opacity-50 cursor-not-allowed;
+        @apply cursor-not-allowed;
       }
     }
   }

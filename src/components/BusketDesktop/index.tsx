@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppSelector } from 'hooks/useAppSelector';
 import { vibrateClick } from 'utils/haptics';
 import BusketCard from 'components/Cards/Cart';
+import { DISABLED_BG } from 'utils/colors';
 
 
 const BusketDesktop = ({
@@ -108,7 +109,8 @@ const BusketDesktop = ({
       <hr style={{ borderTop: '1px solid #f3f3f3' }} />
       <div className='bg-[#fff] p-[12px]'>
         <button
-          style={{ backgroundColor: colorTheme }}
+          // Неактивная кнопка — серая, а не выцветшая фирменного цвета.
+          style={{ backgroundColor: disabled ? DISABLED_BG : colorTheme }}
           onClick={handleClick}
           disabled={disabled}
         >

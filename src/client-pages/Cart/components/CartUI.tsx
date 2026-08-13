@@ -2,6 +2,7 @@ import React, { RefObject } from 'react';
 import Image from 'next/image';
 
 import PhoneField from 'components/PhoneField';
+import { DISABLED_BG } from 'utils/colors';
 import { vibrateClick } from 'utils/haptics';
 
 import clearCartIcon from '@/assets/icons/Busket/clear-cart.svg';
@@ -385,7 +386,8 @@ export const FooterBar: React.FC<{
     <footer className='cart__footer'>
       <button
         disabled={disabled}
-        style={{ backgroundColor: colorTheme }}
+        // Неактивная кнопка — серая, а не выцветшая фирменного цвета.
+        style={{ backgroundColor: disabled ? DISABLED_BG : colorTheme }}
         onClick={() => {
           vibrateClick();
           onPay();

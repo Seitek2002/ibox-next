@@ -272,6 +272,9 @@ const Cart: React.FC = () => {
     }
   };
 
+  // Без полного номера заказ всё равно не уйдёт — кнопка неактивна и серая.
+  const canPay = cart.length > 0 && isPhoneComplete(phoneNumber);
+
   const handlePhoneBlur = () => {
     // Полный номер — ошибки нет. Пустое поле тоже не подсвечиваем:
     // человек мог просто пройти мимо, о обязательности скажем при отправке.
@@ -734,7 +737,7 @@ const Cart: React.FC = () => {
                 <BusketDesktop
                   to='/order'
                   createOrder={handleOrder}
-                  disabled={!cart.length}
+                  disabled={!canPay}
                 />
               </div>
             )}
@@ -757,7 +760,7 @@ const Cart: React.FC = () => {
 
         {isClient && isMobile && (
           <FooterBar
-            disabled={!cart.length}
+            disabled={!canPay}
             colorTheme={colorTheme}
             onPay={handleOrder}
           />
