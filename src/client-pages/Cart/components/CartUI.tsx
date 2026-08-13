@@ -1,6 +1,7 @@
 import React, { RefObject } from 'react';
 import Image from 'next/image';
 
+import PhoneField from 'components/PhoneField';
 import { vibrateClick } from 'utils/haptics';
 
 import clearCartIcon from '@/assets/icons/Busket/clear-cart.svg';
@@ -138,9 +139,10 @@ export const SpotsSelector: React.FC<{
 export const ContactsForm: React.FC<{
   t: TFunc;
   colorTheme?: string;
-  inputRef?: React.Ref<HTMLInputElement>;
   phoneNumber: string;
   onPhoneChange: (v: string) => void;
+  onPhoneBlur?: () => void;
+  onPhoneEnter?: () => void;
   phoneError?: string;
   isDelivery: boolean;
   address: string;
@@ -153,9 +155,10 @@ export const ContactsForm: React.FC<{
 }> = ({
   t,
   colorTheme,
-  inputRef,
   phoneNumber,
   onPhoneChange,
+  onPhoneBlur,
+  onPhoneEnter,
   phoneError,
   isDelivery,
   address,
@@ -168,24 +171,17 @@ export const ContactsForm: React.FC<{
 }) => {
     return (
       <div className='cart__contacts'>
-        <label htmlFor='phoneNumber'>
-          <span className='text-[16px]'>
-            {t('phoneNumber')}{' '}
-            <span className='required' style={{ color: colorTheme }}>
-              {t('necessarily')}
-            </span>
-          </span>
-          <input
-            type='text'
-            placeholder='+996'
-            id='phoneNumber'
-            ref={inputRef}
-            value={phoneNumber}
-            onChange={(e) => onPhoneChange(e.target.value)}
-            className='text-[16px]'
-          />
-          {phoneError && <div className='error-message'>{phoneError}</div>}
-        </label>
+        <PhoneField
+          id='phoneNumber'
+          label={t('phoneNumber')}
+          requiredText={t('necessarily')}
+          value={phoneNumber}
+          onChange={onPhoneChange}
+          onBlur={onPhoneBlur}
+          onEnter={onPhoneEnter}
+          error={phoneError}
+          colorTheme={colorTheme}
+        />
 
         {isDelivery && (
           <label htmlFor='address'>

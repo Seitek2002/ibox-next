@@ -8,7 +8,14 @@ import { IReqCreateOrder } from 'types/orders.types';
 import { IFoodCart, IProduct } from 'types/products.types';
 import { useAppDispatch } from 'hooks/useAppDispatch';
 import { useAppSelector } from 'hooks/useAppSelector';
+import { getApiBase } from 'utils/endpoints';
 import { vibrateClick } from 'utils/haptics';
+import {
+  formatPhone,
+  isPhoneComplete,
+  toApiPhone,
+  toLocalDigits,
+} from 'utils/phone';
 import { loadUsersDataFromStorage } from 'utils/storageUtils';
 import {
   ContactsForm,
@@ -25,7 +32,6 @@ import CartLoader from 'components/CartLoader';
 import ClearCartModal from 'components/ClearCartModal';
 import FoodDetail from 'components/FoodDetail';
 
-import { useMask } from '@react-input/mask';
 import { clearCart, setUsersData } from 'src/store/yourFeatureSlice';
 
 const Cart: React.FC = () => {
@@ -95,7 +101,7 @@ const Cart: React.FC = () => {
     });
 
     if (storedData.phoneNumber) {
-      setPhoneNumber(`+996${storedData.phoneNumber.replace('996', '')}`);
+      setPhoneNumber(formatPhone(storedData.phoneNumber));
     }
     if (storedData.address) {
       setAddress(storedData.address);
@@ -214,11 +220,6 @@ const Cart: React.FC = () => {
     [data]
   );
 
-  const inputRef = useMask({
-    mask: '+996_________',
-    replacement: { _: /\d/ },
-  });
-
   const [isSelfPickupRoute, setIsSelfPickupRoute] = useState(false);
 
   useEffect(() => {
@@ -256,16 +257,29 @@ const Cart: React.FC = () => {
     document.body.style.overflow = 'hidden';
   };
 
+  const phoneErrorText = (value: string) =>
+    toLocalDigits(value).length
+      ? 'Введите 9 цифр номера'
+      : 'Укажите номер телефона';
+
+  // Пока человек печатает — не ругаемся, только снимаем показанную ошибку,
+  // когда номер стал полным. Проверка целиком — на blur и на отправке.
   const handlePhoneChange = (value: string) => {
     setPhoneNumber(value);
 
-    if (!value.trim()) {
-      setPhoneError('Это обязательное поле');
-    } else if (value.length < 13) {
-      setPhoneError('Тут нужно минимум 12 символов');
-    } else {
+    if (phoneError && isPhoneComplete(value)) {
       setPhoneError('');
     }
+  };
+
+  const handlePhoneBlur = () => {
+    // Полный номер — ошибки нет. Пустое поле тоже не подсвечиваем:
+    // человек мог просто пройти мимо, о обязательности скажем при отправке.
+    if (isPhoneComplete(phoneNumber) || !toLocalDigits(phoneNumber).length) {
+      setPhoneError('');
+      return;
+    }
+    setPhoneError(phoneErrorText(phoneNumber));
   };
 
   const handleAddressChange = (value: string) => {
@@ -283,12 +297,12 @@ const Cart: React.FC = () => {
   const validateForm = () => {
     let hasError = false;
 
-    const cleanPhone = phoneNumber.replace(/\D/g, '');
-    if (!cleanPhone || cleanPhone.length < 12) {
-      setPhoneError('Тут нужно минимум 12 символов');
+    if (!isPhoneComplete(phoneNumber)) {
+      setPhoneError(phoneErrorText(phoneNumber));
       hasError = true;
       const el = document.getElementById('phoneNumber');
       el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el?.focus({ preventScroll: true });
     } else {
       setPhoneError('');
     }
@@ -345,13 +359,7 @@ const Cart: React.FC = () => {
     }
 
     const acc: IReqCreateOrder = {
-      phone: phoneNumber
-        .replace('-', '')
-        .replace('(', '')
-        .replace(')', '')
-        .replace(' ', '')
-        .replace('+', '')
-        .replace(' ', ''),
+      phone: toApiPhone(phoneNumber),
       orderProducts,
       comment,
       serviceMode: 1,
@@ -458,7 +466,9 @@ const Cart: React.FC = () => {
 
     try {
       const response = await fetch(
-        `https://ibox.kg/api/check-promo/?organizationSlug=${venueData.slug}`,
+        `${getApiBase()}check-promo/?organization_slug=${encodeURIComponent(
+          venueData.slug
+        )}`,
         {
           method: 'POST',
           headers: {
@@ -621,9 +631,9 @@ const Cart: React.FC = () => {
               <ContactsForm
                 t={t}
                 colorTheme={colorTheme}
-                inputRef={inputRef}
                 phoneNumber={phoneNumber}
                 onPhoneChange={handlePhoneChange}
+                onPhoneBlur={handlePhoneBlur}
                 phoneError={phoneError}
                 isDelivery={isDeliveryType}
                 address={address}

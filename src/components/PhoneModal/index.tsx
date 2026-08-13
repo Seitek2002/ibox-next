@@ -1,6 +1,8 @@
 import { FC, useEffect, useMemo, useState } from 'react';
-import { X, Phone, Loader2 } from 'lucide-react';
+import { X, Loader2 } from 'lucide-react';
+import PhoneField from 'components/PhoneField';
 import { vibrateClick } from 'utils/haptics';
+import { formatPhone, isPhoneComplete, toApiPhone } from 'utils/phone';
 import { useAppSelector } from 'hooks/useAppSelector';
 
 interface PhoneModalProps {
@@ -10,17 +12,15 @@ interface PhoneModalProps {
   onSubmit: (phone: string) => Promise<void> | void;
 }
 
-const normalizePhoneDigits = (v: string): string => (v || '').replace(/\D/g, '');
-
 const PhoneModal: FC<PhoneModalProps> = ({ open, defaultPhone = '+996', onClose, onSubmit }) => {
   const colorTheme = useAppSelector((s) => s.yourFeature.venue?.colorTheme) || '#854C9D';
-  const [phone, setPhone] = useState<string>(defaultPhone || '+996');
+  const [phone, setPhone] = useState<string>(() => formatPhone(defaultPhone));
   const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (open) {
-      setPhone(defaultPhone || '+996');
+      setPhone(formatPhone(defaultPhone));
       setError('');
       setLoading(false);
       try {
@@ -33,22 +33,18 @@ const PhoneModal: FC<PhoneModalProps> = ({ open, defaultPhone = '+996', onClose,
     }
   }, [open, defaultPhone]);
 
-  const isValid = useMemo(() => {
-    const digits = normalizePhoneDigits(phone);
-    // Kyrgyzstan: country code 996 + 9 digits => 12 digits total
-    return digits.length >= 12;
-  }, [phone]);
+  const isValid = useMemo(() => isPhoneComplete(phone), [phone]);
 
   const handleSubmit = async () => {
     vibrateClick();
     if (!isValid) {
-      setError('Номер должен содержать минимум 12 цифр');
+      setError('Введите 9 цифр номера после +996');
       return;
     }
     setError('');
     try {
       setLoading(true);
-      await onSubmit(phone.trim());
+      await onSubmit(toApiPhone(phone));
       onClose();
     } catch {
       setError('Не удалось сохранить номер. Попробуйте позже.');
@@ -98,22 +94,18 @@ const PhoneModal: FC<PhoneModalProps> = ({ open, defaultPhone = '+996', onClose,
           <p className="text-gray-700 mb-4">
             Для использования баллов нам нужен ваш номер телефона
           </p>
-          <label htmlFor="bonus-phone" className="block text-sm font-medium text-gray-700 mb-2">
-            Номер телефона (КР)
-          </label>
-          <div className="relative">
-            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-            <input
-              id="bonus-phone"
-              type="tel"
-              inputMode="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="+996 XXX XXX XXX"
-              className="w-full pl-11 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-gray-400 text-[16px]"
-            />
-          </div>
-          {error && <div className="mt-2 text-sm text-red-600">{error}</div>}
+          <PhoneField
+            id="bonus-phone"
+            label="Номер телефона (КР)"
+            value={phone}
+            onChange={(v) => {
+              setPhone(v);
+              if (error && isPhoneComplete(v)) setError('');
+            }}
+            onEnter={handleSubmit}
+            error={error}
+            colorTheme={colorTheme}
+          />
         </div>
 
         <div className="p-5 sm:p-6 pt-0 flex items-center justify-end gap-3">
