@@ -1,9 +1,10 @@
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import Image from 'next/image';
 
 import { IFoodCart } from 'types/products.types';
 import { useAppDispatch } from 'hooks/useAppDispatch';
 import { useAppSelector } from 'hooks/useAppSelector';
+import { useProductImage } from 'hooks/useProductImage';
 import { vibrateClick } from 'utils/haptics';
 
 import minus from '@/assets/icons/Busket/minus.svg';
@@ -17,7 +18,7 @@ interface IProps {
 }
 
 const BusketCard: FC<IProps> = ({ item, onMaxExceeded }) => {
-  const [isLoaded, setIsLoaded] = useState(false);
+  const { isLoaded, imageProps } = useProductImage(item.productPhoto);
   const dispatch = useAppDispatch();
   const colorTheme = useAppSelector(
     (state) => state.yourFeature.venue?.colorTheme
@@ -53,12 +54,10 @@ const BusketCard: FC<IProps> = ({ item, onMaxExceeded }) => {
           <div className='cart-img-skeleton absolute top-0 left-0 w-full h-full bg-gray-300 animate-pulse'></div>
         )}
         <Image
-          src={item.productPhoto || ''}
+          {...imageProps}
           alt={item.productName || ''}
           fill
           sizes="(max-width: 768px) 33vw, 200px"
-          unoptimized={/^https?:\/\//.test(String(item.productPhoto))}
-          onLoad={() => setIsLoaded(true)}
           className={`transition-opacity duration-300 ${
             isLoaded ? 'opacity-100' : 'opacity-0'
           }`}

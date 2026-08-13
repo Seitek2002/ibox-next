@@ -1,7 +1,8 @@
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import Image from 'next/image';
 
 import { useAppSelector } from 'hooks/useAppSelector';
+import { useProductImage } from 'hooks/useProductImage';
 
 
 interface IProps {
@@ -16,7 +17,7 @@ const Item: FC<IProps> = ({ img, name, price, weight, quantity }) => {
   const colorTheme = useAppSelector(
     (state) => state.yourFeature.venue?.colorTheme
   );
-  const [isLoaded, setIsLoaded] = useState(false);
+  const { isLoaded, imageProps } = useProductImage(img);
 
   return (
     <div className='order__status-list-item'>
@@ -25,12 +26,10 @@ const Item: FC<IProps> = ({ img, name, price, weight, quantity }) => {
           <div className='cart-img-skeleton absolute top-0 left-0 w-full h-full bg-gray-300 animate-pulse'></div>
         )}
         <Image
-          src={img || ''}
+          {...imageProps}
           alt={name}
           fill
           sizes="(max-width: 768px) 25vw, 160px"
-          unoptimized={/^https?:\/\//.test(String(img))}
-          onLoad={() => setIsLoaded(true)}
           className={`transition-opacity duration-300 cursor-pointer ${
             isLoaded ? 'opacity-100' : 'opacity-0'
           }`}
