@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import Image from 'next/image';
 
+import VenueLogo from 'components/VenueLogo';
 import { useGetVenueQuery } from 'api/Venue.api';
 import { useAppDispatch } from 'hooks/useAppDispatch';
 import { vibrateClick } from 'utils/haptics';
@@ -52,11 +52,15 @@ const SelectOrderType = () => {
         <div className='sub-header'>
           <div className='sub-header__content'>
             <div className='venue'>
-              <div className='logo'>
-                <Image src={data?.logo || ''} alt='' width={32} height={32} unoptimized />
-              </div>
-              <div>
-                <div className='text-[20px] font-bold'>{data?.companyName}</div>
+              <VenueLogo
+                logo={data?.logo}
+                name={data?.companyName}
+                colorTheme={data?.colorTheme}
+              />
+              <div className='min-w-0'>
+                <div className='text-[20px] font-bold truncate'>
+                  {data?.companyName}
+                </div>
                 <span className='text-sm'>{data?.spots?.[0]?.address}</span>
               </div>
             </div>

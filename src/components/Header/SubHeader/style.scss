@@ -4,14 +4,18 @@
     }
 
     .venue {
-        @apply flex items-center gap-2;
+        @apply flex items-center gap-[10px] min-w-0;
     }
 
     .logo {
-        @apply size-[44px] rounded-full overflow-hidden;
+        @apply shrink-0 rounded-full overflow-hidden bg-[#F1F2F3] flex items-center justify-center;
 
         img {
-            @apply h-full object-cover;
+            @apply w-full h-full object-cover;
+        }
+
+        &__initial {
+            @apply w-full h-full flex items-center justify-center text-white font-bold text-[18px] leading-none;
         }
     }
 

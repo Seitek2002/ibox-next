@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'hooks/useAppSelector';
-import Image from 'next/image';
 
+import VenueLogo from 'components/VenueLogo';
 import { useGetVenueQuery } from 'api/Venue.api';
 import { loadVenueFromStorage } from 'utils/storageUtils';
 
@@ -33,10 +33,12 @@ const SubHeader = () => {
     <div className='sub-header'>
       <div className='sub-header__content'>
         <div className='venue'>
-          <div className='logo'>
-            <Image src={data?.logo || ''} alt='' width={32} height={32} unoptimized />
-          </div>
-          <div>
+          <VenueLogo
+            logo={data?.logo}
+            name={data?.companyName}
+            colorTheme={data?.colorTheme}
+          />
+          <div className='min-w-0'>
             <div className='name' title={data?.companyName}>
               {data?.companyName}
             </div>
