@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 
+import { getApiBase } from 'utils/endpoints';
+
 /**
  * Venue-scoped layout that sets metadata based on venue API response.
  * - Uses organization description for meta description
@@ -22,10 +24,7 @@ export async function generateMetadata(props: {
 
   try {
     const res = await fetch(
-      `${
-        process.env.NEXT_PUBLIC_API_BASE_URL ||
-        'https://stark.adamtech.dev/api/'
-      }organizations/${encodeURIComponent(slug)}/`,
+      `${getApiBase()}organizations/${encodeURIComponent(slug)}/`,
       {
         // Cache softly to avoid hammering the API but keep it reasonably fresh
         next: { revalidate: 300 },

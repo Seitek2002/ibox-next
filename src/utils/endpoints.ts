@@ -1,4 +1,4 @@
-export const DEFAULT_API_BASE = 'https://stark.adamtech.dev/api/';
+export const DEFAULT_API_BASE = 'https://ibox.kg/api/';
 
 /**
  * Returns REST API base URL with trailing slash ensured.
@@ -14,7 +14,7 @@ export function getApiBase(): string {
 /**
  * Derives WS base from NEXT_PUBLIC_WS_BASE_URL if provided.
  * Otherwise converts API base protocol to ws(s) and uses only host (no /api).
- * Fallback: wss://stark.adamtech.dev
+ * Fallback: wss://ibox.kg
  */
 export function getWsBase(): string {
   const wsEnv = process.env.NEXT_PUBLIC_WS_BASE_URL;
@@ -27,7 +27,7 @@ export function getWsBase(): string {
     const protocol = u.protocol === 'https:' ? 'wss:' : 'ws:';
     return `${protocol}//${u.host}`;
   } catch {
-    return 'wss://stark.adamtech.dev';
+    return 'wss://ibox.kg';
   }
 }
 

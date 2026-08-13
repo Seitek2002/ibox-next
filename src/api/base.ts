@@ -2,8 +2,9 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import i18n from 'i18next';
 
-const baseUrl =
-  (process.env.NEXT_PUBLIC_API_BASE_URL as string) || 'https://ibox.kg/api/';
+import { getApiBase } from 'utils/endpoints';
+
+const baseUrl = getApiBase();
 
 export const baseApi = createApi({
   reducerPath: 'api',
